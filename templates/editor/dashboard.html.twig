@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+
+    <main style="background-color: #e7e7e7">
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <style>
+        .btn.btn-link {
+            color: #333;
+            font-size: 20px;
+        }
+
+        .card {
+            margin-bottom: 100px;
+            border-bottom: #2b2f32 solid 5px;
+            border-right: #2b2f32 solid 5px;
+            border-left: #2b2f32 solid 2px;
+            border-top: #2b2f32 solid 1px;
+            border-radius: 15px;
+        }
+
+        .btn-link {
+            text-decoration: none;
+            color: #007bff;
+            cursor: pointer;
+        }
+
+        .btn-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <div class="container mt-5" >
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <a href="{{ path('app_profile') }}">
+                        <div class="card-header" style="background-color:#2b3035; color: #fff3cd;">
+                            <h2 class="mb-0">MY Transactions</h2>
+                            <br>
+                        </div>
+                    </a>
+                    <div class="card-body" style="background-color:rgba(214,215,217,0.82);  font-size: 25px;" >
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="{{ path('app_profil_edit') }}" class="btn btn-link">Profile Edit</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('app_change_password') }}" class="btn btn-link">Change Password</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('app_news') }}" class="btn btn-link">News Add</a>
+                            </li>
+
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+            {% if 'Editor' in user.roles %}
+                <div class="col-md-6 ">
+                    <div class="card">
+                        <a href="{{ path('editor_review') }}">
+                            <div class="card-header" style="background-color:#2b3035; color: #fff3cd;">
+                                <h2 class="mb-0">Editor</h2>
+                                <br>
+                            </div>
+                        </a>
+                        <div class="card-body" style= "padding:0px; background-color:rgba(214,215,217,0.82);">
+                            <ul class="list-unstyled">
+                                <li>
+                                    <a href="{{ path('editor_review') }}" class="btn btn-link">Assignment</a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('app_check') }}" class="btn btn-link">News Control</a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('app_editrequest') }}" class="btn btn-link">Edit Request</a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('app_published') }}" class="btn btn-link">Publish</a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('app_denied') }}" class="btn btn-link">Denied</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+    </main>
+{% endblock %}

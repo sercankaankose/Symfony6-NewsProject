@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div>
+        <h1 style="text-align: center">Edit News</h1>
+        <div style="text-align: right;">
+            <a href="{{ path('app_profile') }}" class="btn btn-outline-dark">Back Profile</a>
+        </div>
+
+    </div>
+    <hr>
+
+    <div class="container-fluid container-xl">
+
+        {{ form_start(form) }}
+
+
+        <div class="mb-3">
+            <h3>{{ form_label(form.title) }}</h3>
+            {{ form_widget(form.title) }}
+        </div>
+
+        <div class="mb-3">
+            <h3> {{ form_label(form.content) }}</h3>
+            {{ form_widget(form.content, {'attr': {'style': 'height: 500px'}}) }}
+        </div>
+
+        <div class="mb-3">
+            <h3> {{ form_label(form.category) }}</h3>
+            {{ form_widget(form.category) }}
+        </div>
+
+        <div class="mb-3">
+
+            <h3> {{ form_label(form.image) }}</h3>
+            {{ form_widget(form.image) }}
+            <br>
+
+            {% if news.image != null %}
+                <img class="d-inline-block"
+                     src="{{ asset(news.image) }}" alt="News Image"
+                     width="350" height="250">
+            {% else %}
+                <figure>image not found</figure>
+            {% endif %}
+        </div>
+
+        <div>
+            <button 
+                    type="submit" class="btn btn-primary btn-lg">Save Changes
+            </button>
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}

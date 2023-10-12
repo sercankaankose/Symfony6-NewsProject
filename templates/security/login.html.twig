@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in!{% endblock %}
+
+{% block body %}
+    <br>
+    <br>
+    <br>
+    <br>
+    <style>
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+    <div class="container">
+
+        <form method="post" class="">
+            {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+
+            {% if app.user %}
+                <div class="mb-3">
+                    You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+                </div>
+            {% endif %}
+
+            <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+            <hr>
+            <label for="inputEmail">Email</label>
+            <input type="email" value="{{ last_username }}" name="email" id="inputEmail"
+                   class="form-control{% if error %} is-invalid{% endif %}"
+                   autocomplete="email" required autofocus>
+            <div class="invalid-feedback">
+                Please provide a valid email.
+            </div>
+            <label for="inputPassword">Password</label>
+            <input type="password" name="password" id="inputPassword"
+                   class="form-control{% if error %} is-invalid{% endif %}"
+                   autocomplete="current-password" required>
+            <div class="invalid-feedback">
+                Please provide a password.
+            </div>
+
+            <input type="hidden" name="_csrf_token"
+                   value="{{ csrf_token('authenticate') }}"
+            >
+            <div class="button-container">
+
+                <p>you don't have account?<a class="m-lg-2 btn btn-group-lg btn-primary"
+                                               href="{{ path('app_register') }}">Register</a></p>
+                <p>did you forget your <a class="btn btn-link" href="{{ path('app_forgot_password_request') }}">password</a>
+                </p>
+                <button class="btn btn-lg btn-dark" type="submit">
+                    Sign in
+                </button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

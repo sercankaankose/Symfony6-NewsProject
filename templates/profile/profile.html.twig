@@ -1,0 +1,334 @@
+{% extends 'base.html.twig' %}
+
+    {% block title %}Profile{% endblock %}
+
+    {% block body %}
+        <style>
+            .status-box {
+                display: inline-block;
+                border-radius: 4px;
+                padding: 4px 8px;
+
+            }
+
+
+            .status-editor-review {
+                background-color: #f39c12;
+                color: white;
+                border: 1px solid #101925;
+                border-radius: 5px;
+                padding: 3px;
+            }
+
+            .status-sent-to-edit {
+                background-color: #3498db;
+                color: white;
+                border: 1px solid #101925;
+                border-radius: 5px;
+                padding: 3px;
+            }
+
+            .status-accepted {
+                background-color: #2ecc71;
+                color: white;
+                border: 1px solid #101925;
+                border-radius: 5px;
+                padding: 3px;
+            }
+
+            .status-denied {
+                background-color: #e74c3c;
+                color: white;
+                border: 1px solid #101925;
+                border-radius: 5px;
+                padding: 3px;
+            }
+
+            .status-waiting {
+                background-color: #2b2f32;
+                color: white;
+                border: 1px solid #101925;
+                border-radius: 5px;
+                padding: 3px;
+            }
+        </style>
+
+        <style>
+            .status-box {
+                width: 150px;
+                height: 30px;
+                text-align: center;
+            }
+
+            .custom-select-blue {
+                border: 1px solid #101925;
+                border-radius: 5px;
+                padding: 3px;
+            }
+
+            .status-span {
+                display: inline-block;
+                border-radius: 5px;
+                padding: 3px;
+                width: 100px;
+                text-align: center;
+            }
+
+            .action-action {
+                display: inline-block;
+                border-radius: 5px;
+                padding: 3px;
+                width: 100px;
+                text-align: center;
+            }
+
+
+            body {
+                overflow-x: hidden;
+            }
+
+            .filter-form {
+                display: flex;
+                align-items: center;
+            }
+
+            .filter-group {
+                margin-right: 20px;
+            }
+
+            .filter-button {
+                margin-top: 10px;
+            }
+        </style>
+        <br>
+        <br>
+        <br>
+
+        <br>
+        <br>
+        <div>
+            {% for message in app.flashes('profilesucces') %}
+                <br>
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('deletenew') %}
+                <br>
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('passwordsuccess') %}
+                <br>
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('successeditnews') %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('permıserror') %}
+                <div class="alert alert-warning">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('timeisout') %}
+                <div class="alert alert-warning">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="col-md-6 ">
+                    <h1 class="text-6xl text-center pb-12">
+                        Profile
+                    </h1>
+                </div>
+                <div class="col-md-0 ">
+                    {% if app.user %}
+                        <a class="btn btn-secondary btn-lg" href="{{ path('app_news') }}">
+                            Add News
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="col-md-2">
+                    {% if 'Editor' in app.user.roles %}
+                        <select id="news-filter" class="form-select custom-select-blue"
+                                onchange="location = this.value;">
+                            <option value="{{ path('app_profile') }}">My News</option>
+                            <option value="{{ path('editor_review') }}">Editorial</option>
+                        </select>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <hr>
+            <div class="mb-3 text-center">
+                <div class="row">
+                    <div class="col-md-3">
+                        <!-- ... -->
+                        <img class="d-inline-block rounded-circle"
+                             src="{{ asset(user.profileImage ?? 'img/profilepic.png') }}" alt="Profile Image"
+                             width="250" height="250">
+                        <h2>{{ user.name }}</h2>
+                        <h2>{{ user.surname }}</h2>
+                        <p>{{ user.email }}</p>
+                        <a href="{{ path('app_profil_edit') }}" class="btn btn-outline-dark">Edit Profile</a>
+                        <a href="{{ path('app_change_password') }}" class="btn btn-outline-dark">Reset Password</a>
+                    </div>
+                    <!-- ... news ... -->
+                    <div class="col-md-9"
+                         style="padding-right: initial; max-height: 800px; overflow: auto; background-color: #f8f7f7">
+
+                        <h2> Your News </h2>
+
+                        <div>
+                            <form action="{{ app.request.uri }}" method="GET" class="filter-form"
+                                  onsubmit="applyFilters()">
+                                <div class="filter-group">
+                                    <label for="status-filter">Status:</label>
+                                    <select name="status" id="status-filter" onchange="updateFilters()">
+                                        <option value="">All</option>
+                                        <option value="waiting">Waiting</option>
+                                        <option value="editorreview">Editor Review</option>
+                                        <option value="accepted">Accepted</option>
+                                        <option value="denied">Denied</option>
+                                        <option value="sent_to_edit">Sent to Edit</option>
+                                        <option value="in_progress">Editable</option>
+                                        <option value="published">Published</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <label for="category-filter">Category:</label>
+                                    <select name="category" id="category-filter" onchange="updateFilters()">
+                                        <option value="">All</option>
+                                        <option value="1">Sports</option>
+                                        <option value="2">Politics</option>
+                                        <option value="3">Finance</option>
+                                        <option value="4">Technology</option>
+                                        <option value="5">Health</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary filter-button btn-sm"
+                                        onclick="applyFilters()">Filter
+                                </button>
+                            </form>
+
+
+                            <table class="table table-striped" id="mytable">
+                                <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                                <br>
+                                </thead>
+                                <tbody>
+                                {% for news in userNews %}
+                                    <tr>
+                                        <td>{{ news.title }}</td>
+                                        <td>{{ news.category.categoryname }}</td>
+                                        <td>
+                                            {% if news.status == 'editorreview' %}
+                                                <span class="status-span status-editor-review">Editor Review</span>
+                                            {% elseif news.status == 'sent_to_edit' %}
+                                                <span class="status-span status-sent-to-edit">Sent to Edit</span>
+                                            {% elseif news.status == 'waiting' %}
+                                                <span class="status-span status-waiting">Waiting</span>
+                                            {% elseif news.status == 'accepted' %}
+                                                <span class="status-span status-accepted">Accepted</span>
+                                            {% elseif news.status == 'denied' %}
+                                                <span class="status-span status-denied">Denied</span>
+                                            {% elseif news.status == 'published' %}
+                                                <span class="status-span status-accepted">published</span>
+                                            {% elseif news.status == 'in_progress' %}
+                                                <span class="status-span status-sent-to-edit">Editable</span>
+                                            {% elseif news.status == 'edit_request_response' %}
+                                                <span class="status-span status-sent-to-edit">Waiting Editor</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if news.status == 'waiting' %}
+                                                <a class="btn btn-secondary action-action"
+                                                   href="{{ path('app_news_edit', {'id': news.id}) }}">Edit</a>
+                                            {% elseif news.status == 'sent_to_edit' %}
+                                                <a class="btn btn-warning action-action"
+                                                   href="{{ path('app_news_send_edit', {'id': news.id}) }}">Review</a>
+                                            {% elseif news.status == 'published' %}
+                                                <a class="btn btn-success action-action"
+                                                   href="{{ path('app_post', {'id': news.id}) }}">Look</a>
+                                            {% elseif news.status == 'denied' %}
+                                                <a class="btn btn-danger action-action"
+                                                   href="{{ path('app_delete', {'id': news.id}) }}">Delete</a>
+
+                                            {% elseif news.status == 'in_progress' %}
+                                                <a class="btn btn-success action-action"
+                                                   href="{{ path('editing_news', {'id': news.id}) }}">Edit</a>
+                                            {% else %}
+                                                <a class="btn btn-secondary action-action"> Look </a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% block javascripts %}
+            <script>
+                var storedStatusFilter = localStorage.getItem("status-filter");
+                var storedCategoryFilter = localStorage.getItem("category-filter");
+
+                if (storedStatusFilter) {
+                    document.getElementById("status-filter").value = storedStatusFilter;
+                } else {
+                    document.getElementById("status-filter").value = "";
+                }
+
+                if (storedCategoryFilter) {
+                    document.getElementById("category-filter").value = storedCategoryFilter;
+                } else {
+                    document.getElementById("category-filter").value = "";
+                }
+
+                document.getElementById("status-filter").addEventListener("change", function () {
+                    localStorage.setItem("status-filter", this.value);
+                    applyFilters();
+                });
+
+                document.getElementById("category-filter").addEventListener("change", function () {
+                    localStorage.setItem("category-filter", this.value);
+                    applyFilters();
+                });
+
+                document.querySelector(".filter-button").addEventListener("click", function () {
+                       applyFilters();
+                });
+
+                function applyFilters() {
+                    var statusFilter = document.getElementById("status-filter").value;
+                    var categoryFilter = document.getElementById("category-filter").value;
+
+
+                    window.onload = function () {
+                        localStorage.removeItem("status-filter");
+                        localStorage.removeItem("category-filter");
+                    };
+
+                }
+            </script>
+        {% endblock %}
+
+
+    {% endblock %}

@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+
+    {% block body %}
+        <style>
+            /* Your existing styles here */
+            .centered-image {
+                display: flex;
+                justify-content: center;
+            }
+
+
+        </style>
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Kenar Çubuğu -->
+                <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                    {% include 'sidebar_template.twig' %}
+                </nav>
+
+                <!-- Ana İçerik -->
+                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editModalLabel">Edit News</h5>
+                                    <button type="button" class="btn-close btn-warning" data-dismiss="modal"
+                                            aria-label="Close">
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ path('change_news_status', { 'newsId': newsId, 'status': 'sent_to_edit' }) }}"
+                                          method="post">
+                                        <div class="form-group">
+                                            <label for="editor_note">Editor Note:</label>
+                                            <textarea class="form-control" id="editor_note" name="editor_note" rows="12"
+                                                      required></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="mb-0">NEWS REVIEW</h2>
+                        <div class="mt-4">
+                            <!-- Send to Edit düğmesi -->
+                            <a href="{{ path('change_news_status', { 'newsId': newsId, 'status': 'sent_to_edit' }) }}"
+                               class="btn btn-warning btn-lg" data-bs-toggle="modal" data-bs-target="#editModal">Send to
+                                Edit</a>
+
+                            <!-- Deny düğmesi -->
+                            <a href="{{ path('change_news_status', { 'newsId': newsId, 'status': 'denied' }) }}"
+                               class="btn btn-danger btn-lg">Deny</a>
+
+                            <!-- Accept düğmesi -->
+                            <a href="{{ path('change_news_status', { 'newsId': newsId, 'status': 'accepted' }) }}"
+                               class="btn btn-success btn-lg">Accept</a>
+                        </div>
+                        <a class="btn btn-outline-primary btn-lg" href="{{ path('app_check') }}">Back Review</a>
+                    </div>
+                    <hr>
+                    <!-- İçerik -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p><strong>News ID:</strong> {{ newsId }}</p>
+                            {% if news.author %}
+                                <p><strong>Author:</strong> {{ news.author.name }} {{ news.author.surname }}</p>
+                            {% endif %}
+                            <div class="col-md-12">
+                            </div>
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-12 post-content">
+                                        <div class="single-post">
+                                            <div class="post-meta"><span
+                                                        class="date">{{ news.category.categoryname }}</span> <span
+                                                        class="mx-1">&bullet;</span>
+                                                <span>{{ news.createdat|date("M jS 'y") }}</span></div>
+                                            <div class="post-meta">&bullet;<span>{{ news.author.name }}</span>
+                                                <span>{{ news.author.surname }}</span></div>
+                                            <h1 class="mb-5">{{ news.title }}</h1>
+                                            {% if news.image %}
+                                                <div class="centered-image">
+                                                    <img src="{{ asset(news.image) }}" alt="News Image"
+                                                         class="img-fluid m-3">
+                                                </div>
+                                            {% else %}
+                                                <p>No Image Available</p>
+                                            {% endif %}
+                                            <p>
+                                                <span class="firstcharacter">{{ news.content|slice(0, 1) }}</span>{{ news.content|slice(1)|nl2br }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- İçerik sonu -->
+                </main>
+            </div>
+        </div>
+    {% endblock %}
+
+    {% block title %}
+        News Detail
+    {% endblock %}

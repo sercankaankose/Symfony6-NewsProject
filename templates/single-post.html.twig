@@ -1,0 +1,146 @@
+{% extends  'base.html.twig' %}
+
+
+{% block title %}News{% endblock %}
+
+{% block body %}
+
+    <main id="main">
+
+        <section class="single-post-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9 post-content" data-aos="fade-up">
+
+                        <!-- ======= Single Post Content ======= -->
+                        <div class="single-post">
+                            <div class="post-meta"><span class="date">{{ news.category.categoryname }}</span>
+                                <span class="mx-1">&bullet;</span>
+                                <span>{{ news.publishedAt|date('M jS Y') }}</span> <br>
+                                <hr>
+                                <span class="date">{{ news.author.name }}</span> <span
+                                        class="date">{{ news.author.surname }}</span>
+                            </div>
+                            <h1 class="mb-5">{{ news.title }}</h1>
+
+                            {% if news.image != null %}
+                                <figure class="my-4">
+                                    <img src="{{ asset(news.image) }}" alt="" class="img-thumbnail">
+                                </figure>
+                            {% else %}
+                            {% endif %}
+                            <div class="container">
+                                <p>
+                                    <span class="firstcharacter">{{ news.content|slice(0, 1) }}</span>{{ news.content|slice(1)|nl2br }}
+                                </p>
+                            </div><!-- End Single Post Content -->
+                        </div>
+
+                    </div>
+                    <div class="col-md-3">
+                        <!-- ======= Sidebar ======= -->
+                        <div class="aside-block">
+
+                            <ul class="nav nav-pills custom-tab-nav mb-4" id="pills-tab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="pills-popular-tab" data-bs-toggle="pill"
+                                            data-bs-target="#pills-popular" type="button" role="tab"
+                                            aria-controls="pills-popular" aria-selected="true">Popular
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="pills-trending-tab" data-bs-toggle="pill"
+                                            data-bs-target="#pills-trending" type="button" role="tab"
+                                            aria-controls="pills-trending" aria-selected="false">Trending
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="pills-latest-tab" data-bs-toggle="pill"
+                                            data-bs-target="#pills-latest" type="button" role="tab"
+                                            aria-controls="pills-latest" aria-selected="false">Latest
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content" id="pills-tabContent">
+
+                                <!-- Popular -->
+                                <div class="tab-pane fade show active" id="pills-popular" role="tabpanel"
+                                     aria-labelledby="pills-popular-tab">
+                                    {% for index, new in popularNews %}
+                                            <div class="post-entry-1 border-bottom">
+                                                <div class="post-meta">
+                                                    <span class="date">{{ new.category.categoryname }}</span>
+                                                    <span class="mx-1">&bullet;</span>
+                                                    <span>{{ new.createdAt|date('M jS Y') }}</span>
+                                                </div>
+                                                <h2 class="mb-2">
+                                                    <a href="{{ path('app_post', {'id': new.id}) }}">{{ new.title }}</a>
+                                                </h2>
+                                                <span class="author mb-3 d-block">{{ new.author.name }} {{ new.author.surname }}</span>
+                                            </div>
+                                    {% endfor %}
+
+                                </div>
+                                <!-- End Popular -->
+
+                                <!-- Trending -->
+                                <div class="tab-pane fade" id="pills-trending" role="tabpanel" aria-labelledby="pills-trending-tab">
+                                    {% for new in trendingNews |slice(0, 6) %}
+                                        <div class="post-entry-1 border-bottom">
+                                            <div class="post-meta">
+                                                <span class="date">{{ new.category.categoryname }}</span>
+                                                <span class="mx-1">&bullet;</span>
+                                                <span>{{ new.publishedAt|date('M jS Y') }}</span>
+                                            </div>
+                                            <h2 class="mb-2">
+                                                <a href="{{ path('app_post', {'id': new.id}) }}">{{ new.title }}</a>
+                                            </h2>
+                                            <span class="author mb-3 d-block">{{ new.author.name }} {{ new.author.surname }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <!-- End Trending -->
+
+                                <!-- Latest -->
+                                <div class="tab-pane fade" id="pills-latest" role="tabpanel" aria-labelledby="pills-latest-tab">
+                                    {% for new in latestNews |slice(0, 6) %}
+                                        <div class="post-entry-1 border-bottom">
+                                            <div class="post-meta">
+                                                <span class="date">{{ new.category.categoryname }}</span>
+                                                <span class="mx-1">&bullet;</span>
+                                                <span>{{ new.publishedAt|date('M jS Y') }}</span>
+                                            </div>
+                                            <h2 class="mb-2">
+                                                <a href="{{ path('app_post', {'id': new.id}) }}">{{ new.title }}</a>
+                                            </h2>
+                                            <span class="author mb-3 d-block">{{ new.author.name }} {{ new.author.surname }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <!-- End Latest -->
+
+                                <div class="aside-block">
+                                    <h3 class="aside-title">Categories</h3>
+                                    <ul class="aside-links list-unstyled">
+                                        {% for category in categories %}
+                                            <li>
+                                                {#                                        <a href="{{ path('app_edited_news', {'category': news.category.categoryname}) }}"> #}
+                                                <i class="bi bi-chevron-right"></i>
+                                                {{ category.categoryname }}
+                                                {#                                        </a> #}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+
+                                <!-- End Categories -->
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main><!-- End #main -->,
+{% endblock %}

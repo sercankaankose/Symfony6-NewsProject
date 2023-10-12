@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+    <style>
+        .is-invalid {
+            border-color: red;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+    </style>
+
+    <br>
+    <br>
+    <br>
+    <div class="container">
+        {% for flash_error in app.flashes('verify_email_error') %}
+            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        {% endfor %}
+        <h1 class="mt-lg-5">Register</h1>
+        <hr>
+
+        {{ form_start(registrationForm) }}
+
+        <div class="form-group">
+            {{ form_label(registrationForm.email, 'Email') }}
+            {{ form_widget(registrationForm.email, {
+                'attr': {
+                    'class': 'form-control' ~ (form_errors(registrationForm.email)|length > 0 ? ' is-invalid' : '')
+                }
+            }) }}
+            <br>
+            {{ form_errors(registrationForm.email) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(registrationForm.name, 'Name') }}
+            {{ form_widget(registrationForm.name, {
+                'attr': {
+                    'class': 'form-control' ~ (form_errors(registrationForm.name)|length > 0 ? ' is-invalid' : '')
+                }
+            }) }}
+            <br>
+            {{ form_errors(registrationForm.name) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(registrationForm.surname, 'Surname') }}
+            {{ form_widget(registrationForm.surname, {
+                'attr': {
+                    'class': 'form-control' ~ (form_errors(registrationForm.surname)|length > 0 ? ' is-invalid' : '')
+                }
+            }) }}
+            <br>
+
+            {{ form_errors(registrationForm.surname) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(registrationForm.plainPassword, 'Password') }}
+            {{ form_widget(registrationForm.plainPassword, {
+                'attr': {
+                    'class': 'form-control' ~ (form_errors(registrationForm.plainPassword)|length > 0 ? ' is-invalid' : '')
+                }
+            }) }}
+            <br>
+
+            {{ form_errors(registrationForm.plainPassword) }}
+        </div>
+
+        <div class="form-check">
+            {{ form_label(registrationForm.agreeTerms, 'Agree Terms') }}
+            {{ form_widget(registrationForm.agreeTerms, {
+                'attr': {
+                    'class': 'form-check-input' ~ (form_errors(registrationForm.surname)|length > 0 ? ' is-invalid' : '')
+                }
+            }) }}            <br>
+
+
+            {{ form_errors(registrationForm.agreeTerms) }}
+
+
+            {% if form_errors(registrationForm.agreeTerms)|length > 0 %}
+                <label class="form-check-label" for="{{ registrationForm.agreeTerms.vars.id }}">
+                    <span class="invalid-feedback">
+                        {{ form_errors(registrationForm.agreeTerms) }}
+                    </span>
+                </label>
+            {% endif %}
+    </div>
+        <div class="button-container">
+            <p>Already registered? <a href="{{ path('app_login') }}" class="btn btn-lg btn-outline-dark">Login</a></p>
+
+            <button type="submit" class="btn btn-lg btn-primary">Register</button>
+        </div>
+
+
+        {{ form_errors(registrationForm) }}
+
+        {{ form_end(registrationForm) }}
+    </div>
+{% endblock %}
