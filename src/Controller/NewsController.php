@@ -434,14 +434,14 @@ class NewsController extends AbstractController
         $user = $security->getUser();
         $author = $news->getAuthor();
 
-//        if (!$news || $news->getStatus() !== 'denied') {
-//            $this->addFlash('permıserror', 'You do not have permission to delete this news.');
-//            return $this->redirectToRoute('app_profile');
-//        }
+        if (!$news || $news->getStatus() !== 'denied') {
+            $this->addFlash('permıserror', 'You do not have permission to delete this news.');
+            return $this->redirectToRoute('app_profile');
+        }
 
-//        if ($user !== $author) {
-//            throw $this->createAccessDeniedException('You do not have permission to access this news.');
-//        }
+        if ($user !== $author) {
+            throw $this->createAccessDeniedException('You do not have permission to access this news.');
+        }
 
         $editRequests = $this->entityManager->getRepository(EditRequest::class)->findBy(['news' => $id]);
 
