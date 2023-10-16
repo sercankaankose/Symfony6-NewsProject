@@ -1,0 +1,865 @@
+{% extends  'base.html.twig' %}
+
+
+{% block title %}NEWS{% endblock %}
+
+{% block body %}
+    <style>
+        .thumbnail img {
+            max-height: 400px;
+            width: auto;
+        }
+
+    </style>
+    <main id="main">
+
+        <!-- ======= Hero Slider Section ======= -->
+        <div id="carouselExampleCaptions" class="carousel slide">
+            {% for message in app.flashes('register') %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            <div class="col-12">
+                <div class="carousel-indicators">
+
+                    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
+                            aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"
+                            aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2"
+                            aria-label="Slide 3"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        {% set new = popularNews|slice(0, 1)|first %}
+                        {% if new is not empty %}
+
+                        <a href="{{ path('app_post',{'id': new.id}) }}" class="d-block w-100">
+                            <img src="{{ asset(new.image) }}" class="d-block w-100" alt="1"
+                                 style="object-fit: cover; max-height: 80vh; max-width: 100%;"/>
+                            <div class="carousel-caption d-none d-md-block text-bg-dark">
+                                <h2>{{ new.title }}</h2>
+                                <p>{{ new.content|slice(0, 400) }}</p>
+                            </div>
+                        </a>
+                    </div>
+                    {% else %}
+                    {% endif %}
+                    <div class="carousel-item">
+                        {% set new = popularNews|slice(1, 2)|first %}
+                        {% if new is not empty %}
+
+                        <a href="{{ path('app_post',{'id': new.id}) }}" class="d-block w-100">
+                            <img src="{{ asset(new.image) }}" class="d-block w-100" alt="2"
+                                 style="object-fit: cover; max-height: 80vh; max-width: 100%;"/>
+                            <div class="carousel-caption d-none d-md-block text-bg-dark">
+                                <h2>{{ new.title }}</h2>
+                                <p>{{ new.content|slice(0, 400) }}</p>
+                            </div>
+                        </a>
+                    </div>
+                    {% else %}
+                    {% endif %}
+                    <div class="carousel-item">
+                        {% set new = popularNews|slice(2, 3)|first %}
+                        {% if new is not empty %}
+
+                        <a href="{{ path('app_post',{'id': new.id}) }}" class="d-block w-100">
+                            <img src="{{ asset(new.image) }}" class="d-block w-100" alt="3"
+                                 style="object-fit: cover; max-height: 80vh; max-width: 100%;"/>
+                            <div class="carousel-caption d-none d-md-block text-bg-dark">
+                                <h2>{{ new.title }}</h2>
+                                <p>{{ new.content|slice(0, 400) }}</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                {% else %}
+                {% endif %}
+                <div class="swiper-pagination"></div>
+
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
+                data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
+                data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+
+
+        <!-- End Hero Slider Section -->
+
+        <!-- ======= Post Grid Section ======= -->
+        <section id="posts" class="posts">
+            <div class="container" data-aos="fade-up">
+                <div class="row g-5">
+                    <div class="col-lg-4">
+                        <div class="post-entry-1 lg">
+                            {% set new = popularNews|slice(3, 4)|first %}
+                            {% if new is not empty %}
+
+                                <a href="{{ path('app_post',{'id':new.id}) }}"><img src="{{ asset(new.image) }}" alt=""
+                                                                                    class="img-fluid"></a>
+                                <div class="post-meta"><span class="date">{{ new.category.categoryname }}</span> <span
+                                            class="mx-1">&bullet;</span>
+                                    <span>{{ new.publishedAt|date('M jS Y') }}</span></div>
+                                <h2><a href={{ path('app_post',{'id':new.id}) }}>{{ new.title }}</a>
+                                </h2>
+                                <p class="mb-4 d-block">{{ new.content|slice(0, 600) }}...</p>
+
+                                <div class="d-flex align-items-center author">
+                                    <div class="photo"><img src="{{ asset(new.author.profileimage) }}" alt=""
+                                                            class="img-fluid">
+                                    </div>
+                                    <div class="name">
+                                        <h3 class="m-0 p-0">{{ new.author.name }} {{ new.author.surname }}</h3>
+                                    </div>
+                                </div>
+                            {% else %}
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-8">
+                        <div class="row g-5">
+                            <div class="col-lg-4 border-start custom-border">
+                                {% set new = popularNews|slice(4, 5)|first %}
+                                {% if new is not empty %}
+
+                                    <div class="post-entry-1">
+                                        <a href="{{ path('app_post',{'id':new.id}) }}"><img
+                                                    src="{{ asset(new.image) }}" alt=""
+                                                    class="img-fluid"></a>
+                                        <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                        <div class="post-meta"><span class="date">{{ new.category.categoryname }}</span>
+                                            <span
+                                                    class="mx-1">&bullet;</span>
+                                            <span>{{ new.publishedAt|date('M jS Y') }}</span></div>
+                                        <h2><a href="{{ path('app_post',{'id':new.id}) }}">{{ new.title }}</a></h2>
+                                    </div>
+
+                                {% else %}
+                                {% endif %}
+                                {% set new = popularNews|slice(5, 6)|first %}
+                                {% if new is not empty %}
+
+                                <div class="post-entry-1">
+                                    <a href="{{ path('app_post', {'id': new.id}) }}">
+                                        <img src="{{ new.image is empty ? asset('') : asset(new.image) }}" alt=""
+                                             class="img-fluid">
+                                    </a>
+
+                                    <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                    <div class="post-meta"><span class="date">{{ new.category.categoryname }}</span>
+                                        <span
+                                                class="mx-1">&bullet;</span>
+                                        <span>{{ new.publishedAt|date('M jS Y') }}</span>
+                                    </div>
+                                    <h2><a href="{{ path('app_post',{'id':new.id}) }}">{{ new.title }}</a></h2>
+                                </div>
+
+                            </div>
+                            {% else %}
+                            {% endif %}
+                            <div class="col-lg-4 border-start custom-border">
+                                {% set new = popularNews|slice(6, 7)|first %}
+                                {% if new is not empty %}
+                                    <div class="post-entry-1">
+                                        <a href="{{ path('app_post',{'id':new.id}) }}">
+                                            <img src="{{ new.image is empty ? asset('') : asset(new.image) }}" alt=""
+                                                 class="img-fluid">
+
+                                        </a>
+                                        <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                        <div class="post-meta"><span class="date">{{ new.category.categoryname }}</span>
+                                            <span
+                                                    class="mx-1">&bullet;</span>
+                                            <span>{{ new.publishedAt|date('M jS Y') }}</span>
+                                        </div>
+                                        <h2><a href="{{ path('app_post',{'id':new.id}) }}">{{ new.title }}</a></h2>
+                                    </div>
+                                {% else %}
+                                {% endif %}
+                                {% set new = popularNews|slice(7, 8)|first %}
+                                {% if new is not empty %}
+
+                                <div class="post-entry-1">
+                                    <a href="{{ path('app_post',{'id':new.id}) }}"><img
+                                                src="{{ new.image is empty ? asset('') : asset(new.image) }}" alt=""
+                                                class="img-fluid"></a>
+                                    <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                    <div class="post-meta"><span class="date">{{ new.category.categoryname }}</span>
+                                        <span
+                                                class="mx-1">&bullet;</span>
+                                        <span>{{ new.publishedAt|date('M jS Y') }}</span>
+                                    </div>
+                                    <h2><a href="{{ path('app_post',{'id':new.id}) }}">{{ new.title }}</a></h2>
+                                </div>
+                            </div>
+
+                            {% else %}
+                            {% endif %}
+                            <!-- Latest Section -->
+                            <div class="col-lg-4 border-start custom-border">
+
+                                <div class="trending">
+                                    <h3>Latest</h3>
+                                    <ul class="trending-post">
+                                        {% for news in latestNews %}
+                                            {% if news is not empty %}
+
+                                                <li>
+                                                    <a href="{{ path('app_post', {'id': news.id}) }}">
+                                                        <span class="number">{{ loop.index }}</span>
+                                                        <h3>{{ news.title }}</h3>
+                                                        <div class="post-meta"><span
+                                                                    class="date">{{ news.category.categoryname }}</span>
+                                                            <span
+                                                                    class="mx-1">&bullet;</span>
+                                                            <span>{{ news.publishedAt|date('M jS Y') }}</span>
+                                                        </div>
+                                                        <span class="author">{{ news.author.name }} {{ news.author.surname }}</span>
+                                                    </a>
+                                                </li>
+                                            {% else %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- End Latest Section -->
+                        </div>
+
+
+                    </div>
+
+                </div> <!-- End .row -->
+            </div>
+        </section> <!-- End Post Grid Section -->
+
+        <!-- ======= Sports Category Section ======= -->
+        <section class="category-section">
+            <div class="container" data-aos="fade-up">
+
+                <div class="section-header d-flex justify-content-between align-items-center mb-5">
+                    <h2>Sports </h2>
+                    <div><a href="" class="more">See All Sports</a></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-9">
+                        {% set sport = sportsNews|slice(0, 1)|first %}
+                        {% if sport is not empty %}
+
+                            <div class="d-lg-flex post-entry-2">
+                                <a href="../single-post.html.twig" class="me-4 mb-4 mb-lg-0 d-inline-block">
+                                    <img src="{{ sport.image is empty ? asset('') : asset(sport.image) }}" alt=""
+                                         class="img-fluid">
+                                </a>
+                                <div>
+                                    <div class="post-meta"><span class="date">{{ sport.category.categoryname }}</span>
+                                        <span class="mx-1">&bullet;</span>
+                                        <span>{{ sport.publishedAt|date('M jS Y') }}</span></div>
+                                    <hr>
+                                    <span class="author mb-3 d-block">{{ sport.author.name }} {{ sport.author.surname }}</span>
+
+                                    <h3><a href="{{ path('app_post', {'id': sport.id}) }}">{{ sport.title }}</a></h3>
+                                    <p>{{ sport.content|slice(0, 400) }}...</p>
+                                    <div class="d-flex align-items-center author">
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-lg-4">
+                                {% set sport = sportsNews|slice(1, 2)|first %}
+                                {% if sport is not empty %}
+
+                                    <div class="post-entry-1 border-bottom">
+                                        <a href="{{ path('app_post',{'id':sport.id}) }}">
+                                            <img src="{{ sport.image is empty ? asset('') : asset(sport.image) }}"
+                                                 alt="" class="img-fluid">
+                                        </a>
+                                        <div class="post-meta"><span
+                                                    class="date">{{ sport.category.categoryname }}</span> <span
+                                                    class="mx-1">&bullet;</span>
+                                            <span>{{ sport.publishedAt|date('M jS Y') }}</span></div>
+                                        <hr>
+                                        <span class="author mb-3 d-block">{{ sport.author.name }} {{ sport.author.surname }}</span>
+                                        <h2 class="mb-2"><a href="{{ path('app_post',{'id':sport.id}) }}">
+                                                {{ sport.title }}
+                                            </a></h2>
+                                        <p class="mb-4 d-block">{{ sport.content|slice(0, 300) }}...</div>
+                                {% else %}
+                                {% endif %}
+                                {% set sport = sportsNews|slice(2, 3)|first %}
+                                {% if sport is not empty %}
+
+
+                                <div class="post-entry-1">
+                                    <div class="post-meta"><span class="date">{{ sport.category.categoryname }}</span>
+                                        <span
+                                                class="mx-1">&bullet;</span>
+                                        <span>{{ sport.publishedAt|date('M jS Y') }}</span></div>
+                                    <span class="author mb-3 d-block">{{ sport.author.name }} {{ sport.author.surname }}</span>
+                                    <h2 class="mb-2"><a
+                                                href="{{ path('app_post', {'id': sport.id}) }}">{{ sport.title }}</a>
+                                    </h2>
+                                </div>
+                            </div>
+                            {% else %}
+                            {% endif %}
+                            <div class="col-lg-8">
+                                <div class="post-entry-1">
+                                    {% set sport = sportsNews|slice(2, 3)|first %}
+                                    {% if sport is not empty %}
+
+                                    <a href="{{ path('app_post',{'id':sport.id}) }}"><img
+                                                src="{{ sport.image is empty ? asset('') : asset(sport.image) }}" alt=""
+                                                class="img-fluid"></a>
+                                    <div class="post-meta"><span class="date">{{ sport.category.categoryname }}</span>
+                                        <span
+                                                class="mx-1">&bullet;</span>
+                                        <span>{{ sport.publishedAt|date('M jS Y') }}</span></div>
+                                    <hr>
+                                    <span class="author mb-3 d-block">{{ sport.author.name }} {{ sport.author.surname }}</span>
+                                    <h2 class="mb-2"><a href="{{ path('app_post',{'id':sport.id}) }}">
+                                            {{ sport.title }}
+                                        </a></h2>
+                                    <p class="mb-4 d-block">{{ sport.content|slice(0, 300) }}...</p></div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    {% endif %}
+                    <div class="col-md-3">
+                        {% for sport in sportsNews|slice(4, sportsNews|length) %}
+                            {% if sport is not empty %}
+
+                                <div class="post-entry-1 border-bottom">
+                                    <div class="post-meta"><span class="date">{{ sport.category.categoryname }}</span>
+                                        <span
+                                                class="mx-1">&bullet;</span>
+                                        <span>{{ sport.publishedAt|date('M jS Y') }}</span></div>
+                                    <hr>
+                                    <span class="author mb-3 d-block">{{ sport.author.name }} {{ sport.author.surname }}</span>
+                                    <h2 class="mb-2"><a href="{{ path('app_post',{'id':sport.id}) }}">
+                                            {{ sport.title }}
+                                        </a></h2>
+                                </div>
+                            {% else %}
+                            {% endif %}
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+        </section><!-- End Sports Category Section -->
+
+        <!-- ======= Politics Category Section ======= -->
+        <section class="category-section">
+            <div class="container" data-aos="fade-up">
+
+                <div class="section-header d-flex justify-content-between align-items-center mb-5">
+                    <h2>Politics</h2>
+                    <div><a href="" class="more">See All Politics</a></div>
+                </div>
+
+                <div class="row g-5">
+                    <div class="col-lg-4">
+                        {% set politic = politicsNews|slice(0, 1)|first %}
+                        {% if politic is not empty %}
+                        <div class="post-entry-1 lg">
+                            <a href="{{ path('app_post',{'id':politic.id}) }}"><img
+                                        src="{{ politic.image is empty ? asset('') : asset(politic.image) }}" alt=""
+                                        class="img-fluid"></a>
+                            <div class="post-meta"><span class="date">{{ politic.category.categoryname }}</span> <span
+                                        class="mx-1">&bullet;</span>
+                                <span>{{ politic.publishedAt|date('M jS Y') }}</span></div>
+                            <hr>
+                            <span class="author mb-3 d-block">{{ politic.author.name }} {{ politic.author.surname }}</span>
+                            <h2 class="mb-2"><a href="{{ path('app_post',{'id':politic.id}) }}">
+                                    {{ politic.title }}
+                                </a></h2>
+                            <p class="mb-4 d-block">{{ politic.content|slice(0, 500) }}...</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    {% endif %}
+                    <div class="col-lg-8">
+                        <div class="row g-5">
+                            <div class="col-lg-4 border-start custom-border">
+                                {% for politic in politicsNews|slice(1, 3) %}
+                                    {% if politic is not empty %}
+
+                                        <div class="post-entry-1">
+                                            <a href="{{ path('app_post',{'id':politic.id}) }}"><img
+                                                        src="{{ politic.image is empty ? asset('') : asset(politic.image) }}"
+                                                        alt=""
+                                                        class="img-fluid"></a>
+                                            <div class="post-meta"><span
+                                                        class="date">{{ politic.category.categoryname }}</span> <span
+                                                        class="mx-1">&bullet;</span>
+                                                <span>{{ politic.publishedAt|date('M jS Y') }}</span></div>
+                                            <hr>
+                                            <span class="post-meta">{{ politic.author.name }} {{ politic.author.surname }}</span>
+                                            <h2><a href="{{ path('app_post',{'id':politic.id}) }}">
+                                                    {{ politic.title }}
+                                                </a></h2>
+                                        </div>
+                                        <br>
+                                    {% else %}
+                                    {% endif %}
+                                {% endfor %}
+
+                            </div>
+                            <div class="col-lg-4 border-start custom-border">
+                                {% for politic in politicsNews|slice(4, 3) %}
+                                    {% if politic is not empty %}
+
+                                        <div class="post-entry-1">
+                                            <a href="{{ path('app_post',{'id':politic.id}) }}"><img
+                                                        src="{{ politic.image is empty ? asset('') : asset(politic.image) }}"
+                                                        alt=""
+                                                        class="img-fluid"></a>
+                                            <div class="post-meta"><span
+                                                        class="date">{{ politic.category.categoryname }}</span> <span
+                                                        class="mx-1">&bullet;</span>
+                                                <span>{{ politic.publishedAt|date('M jS Y') }}</span></div>
+                                            <hr>
+                                            <span class="post-meta">{{ politic.author.name }} {{ politic.author.surname }}</span>
+                                            <h2><a href="{{ path('app_post',{'id':politic.id}) }}">
+                                                    {{ politic.title }}
+                                                </a></h2>
+                                        </div>
+                                        <br>
+                                    {% else %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-lg-4">
+                                {% for politic in politicsNews|slice(5, 7) %}
+                                    {% if politic is not empty %}
+
+                                        <div class="post-entry-1 border-bottom">
+                                            <div class="post-meta"><span
+                                                        class="date">{{ politic.category.categoryname }}</span> <span
+                                                        class="mx-1">&bullet;</span>
+                                                <span>{{ politic.publishedAt|date('M jS Y') }}</span></div>
+                                            <span class="author mb-3 d-block">{{ politic.author.name }} {{ politic.author.surname }}</span>
+                                            <h2 class="mb-2"><a href="{{ path('app_post',{'id':politic.id}) }}">
+                                                    {{ politic.title }}
+                                                </a></h2>
+                                        </div>
+                                    {% else %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- End .row -->
+            </div>
+        </section>
+        <!-- End Politics Category Section -->
+
+        <!-- ======= Finance Category Section ======= -->
+        <section class="category-section">
+            <div class="container" data-aos="fade-up">
+
+                <div class="section-header d-flex justify-content-between align-items-center mb-5">
+                    <h2>Finance</h2>
+                    <div><a href="" class="more">See All Finance</a></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-9 order-md-2">
+                        {% set finance = financeNews|slice(0, 1)|first %}
+                        {% if finance is not empty %}
+                            <div class="d-lg-flex post-entry-2">
+                                <a href="{{ path('app_post',{'id':finance.id}) }}"><img
+                                            src="{{ finance.image is empty ? asset('') : asset(finance.image) }}" alt=""
+                                            class="img-fluid" style="padding: 10px"></a>
+                                <div>
+                                    <div class="post-meta"><span class="date">{{ finance.category.categoryname }}</span>
+                                        <span
+                                                class="mx-1">&bullet;</span>
+                                        <span>{{ finance.publishedAt|date('M jS Y') }}</span></div>
+                                    <h3><a href="{{ path('app_post',{'id':finance.id}) }}">{{ finance.title }}</a></h3>
+                                    <p>{{ finance.content|slice(0, 250) }}...</p>
+                                    <div class="d-flex align-items-center author">
+
+                                        <div class="name">
+                                            <h3 class="m-0 p-0">{{ finance.author.name }} {{ finance.author.surname }}</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-lg-4">
+                                {% set finance = financeNews|slice(1, 2)|first %}
+                                {% if finance is not empty %}
+                                    <div class="post-entry-1 border-bottom">
+
+                                        <a href="{{ path('app_post',{'id':finance.id}) }}"><img
+                                                    src="{{ finance.image is empty ? asset('') : asset(finance.image) }}"
+                                                    alt=""
+                                                    class="img-fluid" style="padding: 10px"></a>
+                                        <div class="post-meta"><span
+                                                    class="date">{{ finance.category.categoryname }}</span> <span
+                                                    class="mx-1">&bullet;</span>
+                                            <span>{{ finance.publishedAt|date('M jS Y') }}</span></div>
+                                        <h2 class="mb-2"><a
+                                                    href="{{ path('app_post',{'id':finance.id}) }}">{{ finance.title }}</a>
+                                        </h2>
+                                        <span class="author mb-3 d-block">{{ finance.author.name }} {{ finance.author.surname }}</span>
+                                        <p class="mb-4 d-block">{{ finance.content|slice(0, 250) }}...</p>
+                                    </div>
+                                {% else %}
+                                {% endif %}
+
+                            </div>
+
+                            <div class="col-lg-8">
+                                {% set finance = financeNews|slice(2, 3)|first %}
+                                {% if finance is not empty %}
+                                    <div class="post-entry-1">
+                                        <a href="{{ path('app_post',{'id':finance.id}) }}"><img
+                                                    src="{{ finance.image is empty ? asset('') : asset(finance.image) }}"
+                                                    alt=""
+                                                    class="img-fluid" style="padding: 10px"></a>
+                                        <div class="post-meta"><span
+                                                    class="date">{{ finance.category.categoryname }}</span> <span
+                                                    class="mx-1">&bullet;</span>
+                                            <span>{{ finance.publishedAt|date('M jS Y') }}</span></div>
+
+                                        <h2 class="mb-2"><a
+                                                    href="{{ path('app_post',{'id':finance.id}) }}">{{ finance.title }}</a>
+                                        </h2>
+                                        <span class="author mb-3 d-block">{{ finance.author.name }} {{ finance.author.surname }}</span>
+                                        <p class="mb-4 d-block">{{ finance.content|slice(0, 250) }}...</div>
+                                {% else %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        {% for finance in financeNews|slice(3, 7) %}
+                            {% if finance is not empty %}
+                                <div class="post-entry-1 border-bottom">
+                                    <div class="post-meta"><span class="date">{{ finance.category.categoryname }}</span>
+                                        <span
+                                                class="mx-1">&bullet;</span>
+                                        <span>{{ finance.publishedAt|date('M jS Y') }}</span></div>
+
+                                    <h2><a href="{{ path('app_post',{'id':finance.id}) }}">
+                                            {{ finance.title }}
+                                        </a></h2>
+                                    <span class="author mb-3 d-block">{{ finance.author.name }} {{ finance.author.surname }}</span>
+                                </div>
+                            {% else %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section><!-- End Finance Category Section -->
+
+        <!-- ======= Technology Section ======= -->
+        <section class="category-section">
+            <div class="container" data-aos="fade-up">
+
+                <div class="section-header d-flex justify-content-between align-items-center mb-5">
+                    <h2>Technology</h2>
+                    <div><a href="" class="more">See All Technology</a></div>
+                </div>
+                <div class="container" data-aos="fade-up">
+                    <div class="row g-5">
+                        <div class="col-lg-4">
+                            <div class="post-entry-1 lg">
+                                {% set new = technologyNews|slice(1, 2)|first %}
+                                {% if new is not empty %}
+
+                                    <a href="{{ path('app_post',{'id':new.id}) }}"><img src="{{ asset(new.image) }}"
+                                                                                        alt=""
+                                                                                        class="img-fluid" style="padding: 10px"></a>
+                                    <div class="post-meta"><span class="date">{{ new.category.categoryname }}</span>
+                                        <span
+                                                class="mx-1">&bullet;</span>
+                                        <span>{{ new.publishedAt|date('M jS Y') }}</span></div>
+                                    <h2><a href={{ path('app_post',{'id':new.id}) }}>{{ new.title }}</a>
+                                    </h2>
+                                    <p class="mb-4 d-block">{{ new.content|slice(0, 500) }}...</p>
+
+                                    <div class="d-flex align-items-center author">
+                                        <div class="photo"><img src="{{ asset(new.author.profileimage) }}" alt=""
+                                                                class="img-fluid">
+                                        </div>
+                                        <div class="name">
+                                            <h3 class="m-0 p-0">{{ new.author.name }} {{ new.author.surname }}</h3>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+                        <div class="col-lg-8">
+                            <div class="row g-5">
+                                <div class="col-lg-4 border-start custom-border">
+                                    {% set new = technologyNews|slice(0, 1)|first %}
+                                    {% if new is not empty %}
+
+                                        <div class="post-entry-1">
+                                            <a href="{{ path('app_post',{'id':new.id}) }}"><img
+                                                        src="{{ asset(new.image) }}" alt=""
+                                                        class="img-fluid"></a>
+                                            <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                            <div class="post-meta"><span
+                                                        class="date">{{ new.category.categoryname }}</span>
+                                                <span
+                                                        class="mx-1">&bullet;</span>
+                                                <span>{{ new.publishedAt|date('M jS Y') }}</span></div>
+                                            <h2><a href="{{ path('app_post',{'id':new.id}) }}">{{ new.title }}</a></h2>
+                                        </div>
+
+                                    {% else %}
+                                    {% endif %}
+                                    {% set new = technologyNews|slice(2, 3)|first %}
+                                    {% if new is not empty %}
+
+                                    <div class="post-entry-1">
+                                        <a href="{{ path('app_post', {'id': new.id}) }}">
+                                            <img src="{{ new.image is empty ? asset('') : asset(new.image) }}" alt=""
+                                                 class="img-fluid">
+                                        </a>
+
+                                        <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                        <div class="post-meta"><span class="date">{{ new.category.categoryname }}</span>
+                                            <span
+                                                    class="mx-1">&bullet;</span>
+                                            <span>{{ new.publishedAt|date('M jS Y') }}</span>
+                                        </div>
+                                        <h2><a href="{{ path('app_post',{'id':new.id}) }}">{{ new.title }}</a></h2>
+                                    </div>
+
+                                </div>
+                                {% else %}
+                                {% endif %}
+                                <div class="col-lg-4 border-start custom-border">
+                                    {% set new = technologyNews|slice(4, 5)|first %}
+                                    {% if new is not empty %}
+                                        <div class="post-entry-1">
+                                            <a href="{{ path('app_post',{'id':new.id}) }}">
+                                                <img src="{{ new.image is empty ? asset('') : asset(new.image) }}"
+                                                     alt="" class="img-fluid">
+
+                                            </a>
+                                            <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                            <div class="post-meta"><span
+                                                        class="date">{{ new.category.categoryname }}</span>
+                                                <span
+                                                        class="mx-1">&bullet;</span>
+                                                <span>{{ new.publishedAt|date('M jS Y') }}</span>
+                                            </div>
+                                            <h2><a href="{{ path('app_post',{'id':new.id}) }}">{{ new.title }}</a></h2>
+                                        </div>
+                                    {% else %}
+                                    {% endif %}
+                                    {% set new = technologyNews|slice(7, 8)|first %}
+                                    {% if new is not empty %}
+
+                                    <div class="post-entry-1">
+                                        <a href="{{ path('app_post',{'id':new.id}) }}"><img
+                                                    src="{{ new.image is empty ? asset('') : asset(new.image) }}" alt=""
+                                                    class="img-fluid"></a>
+                                        <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                        <div class="post-meta"><span class="date">{{ new.category.categoryname }}</span>
+                                            <span
+                                                    class="mx-1">&bullet;</span>
+                                            <span>{{ new.publishedAt|date('M jS Y') }}</span>
+                                        </div>
+                                        <h2><a href="{{ path('app_post',{'id':new.id}) }}">{{ new.title }}</a></h2>
+                                    </div>
+                                </div>
+
+                                {% else %}
+                                {% endif %}
+                                <!-- Latest Section -->
+                                <div class="col-lg-4 border-start custom-border">
+                                    {% for new in technologyNews|slice(5, 7) %}
+                                        {% if new is not empty %}
+                                            <div class="post-entry-1 border-bottom">
+                                                <div class="post-meta"><span
+                                                            class="date">{{ new.category.categoryname }}</span>
+                                                    <span
+                                                            class="mx-1">&bullet;</span>
+                                                    <span>{{ new.publishedAt|date('M jS Y') }}</span></div>
+
+                                                <h2><a href="{{ path('app_post',{'id':new.id}) }}">
+                                                        {{ new.title }}
+                                                    </a></h2>
+                                                <span class="author mb-3 d-block">{{ new.author.name }} {{ new.author.surname }}</span>
+                                            </div>
+                                        {% else %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    <!-- End Latest Section -->
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                    </div> <!-- End .row -->
+                </div>
+            </div>
+        </section>
+        <!-- End Technology Category Section -->
+
+
+
+        <!-- ======= Politics Category Section ======= -->
+        <section class="category-section">
+            <div class="container" data-aos="fade-up">
+
+                <div class="section-header d-flex justify-content-between align-items-center mb-5">
+                    <h2>Health</h2>
+                    <div><a href="" class="more">See All Health</a></div>
+                </div>
+
+                <div class="row g-5">
+                    <div class="col-lg-4">
+                        {% set health = healthNews|slice(0, 1)|first %}
+                        {% if health is not empty %}
+                        <div class="post-entry-1 lg">
+                            <a href="{{ path('app_post',{'id':health.id}) }}"><img
+                                        src="{{ health.image is empty ? asset('') : asset(health.image) }}" alt=""
+                                        class="img-fluid"></a>
+                            <div class="post-meta"><span class="date">{{ health.category.categoryname }}</span> <span
+                                        class="mx-1">&bullet;</span>
+                                <span>{{ health.publishedAt|date('M jS Y') }}</span></div>
+                            <hr>
+                            <span class="author mb-3 d-block">{{ health.author.name }} {{ health.author.surname }}</span>
+                            <h2 class="mb-2"><a href="{{ path('app_post',{'id':health.id}) }}">
+                                    {{ health.title }}
+                                </a></h2>
+                            <p class="mb-4 d-block">{{ health.content|slice(0, 600) }}...</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    {% endif %}
+                    <div class="col-lg-8">
+                        <div class="row g-5">
+                            <div class="col-lg-4 border-start custom-border">
+                                {% for health in healthNews|slice(1, 3) %}
+                                    {% if health is not empty %}
+
+                                        <div class="post-entry-1">
+                                            <a href="{{ path('app_post',{'id':politic.id}) }}"><img
+                                                        src="{{ health.image is empty ? asset('') : asset(health.image) }}"
+                                                        alt=""
+                                                        class="img-fluid"></a>
+                                            <div class="post-meta"><span
+                                                        class="date">{{ health.category.categoryname }}</span> <span
+                                                        class="mx-1">&bullet;</span>
+                                                <span>{{ health.publishedAt|date('M jS Y') }}</span></div>
+                                            <hr>
+                                            <span class="post-meta">{{ health.author.name }} {{ health.author.surname }}</span>
+                                            <h2><a href="{{ path('app_post',{'id':health.id}) }}">
+                                                    {{ health.title }}
+                                                </a></h2>
+                                        </div>
+                                        <br>
+                                    {% else %}
+                                    {% endif %}
+                                {% endfor %}
+
+                            </div>
+                            <div class="col-lg-4 border-start custom-border">
+                                {% for health in healthNews|slice(4, 3) %}
+                                    {% if politic is not empty %}
+
+                                        <div class="post-entry-1">
+                                            <a href="{{ path('app_post',{'id':health.id}) }}"><img
+                                                        src="{{ health.image is empty ? asset('') : asset(health.image) }}"
+                                                        alt=""
+                                                        class="img-fluid"></a>
+                                            <div class="post-meta"><span
+                                                        class="date">{{ health.category.categoryname }}</span> <span
+                                                        class="mx-1">&bullet;</span>
+                                                <span>{{ health.publishedAt|date('M jS Y') }}</span></div>
+                                            <hr>
+                                            <span class="post-meta">{{ health.author.name }} {{ health.author.surname }}</span>
+                                            <h2><a href="{{ path('app_post',{'id':health.id}) }}">
+                                                    {{ health.title }}
+                                                </a></h2>
+                                        </div>
+                                        <br>
+                                    {% else %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-lg-4">
+                                {% for health in healthNews|slice(5, 7) %}
+                                    {% if health is not empty %}
+
+                                        <div class="post-entry-1 border-bottom">
+                                            <div class="post-meta"><span
+                                                        class="date">{{ health.category.categoryname }}</span> <span
+                                                        class="mx-1">&bullet;</span>
+                                                <span>{{ health.publishedAt|date('M jS Y') }}</span></div>
+                                            <span class="author mb-3 d-block">{{ health.author.name }} {{ health.author.surname }}</span>
+                                            <h2 class="mb-2"><a href="{{ path('app_post',{'id':health.id}) }}">
+                                                    {{ health   .title }}
+                                                </a></h2>
+                                        </div>
+                                    {% else %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- End .row -->
+            </div>
+        </section>
+        <!-- End Politics Category Section -->
+    </main>
+    <!-- End #main -->
+
+{% endblock %}
+
+
+
+{% block javascripts %}
+    <!-- Vendor JS Files -->
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('vendor/swiper/swiper-bundle.min.js') }}"></script>
+    <script src="{{ asset('vendor/glightbox/js/glightbox.min.js') }}"></script>
+    <script src="{{ asset('vendor/aos/aos.js') }}"></script>
+    <script src="{{ asset('vendor/php-email-form/validate.js') }}"></script>
+
+    <!-- Template Main JS File -->
+{% endblock %}
+
+
+

@@ -1,0 +1,50 @@
+{% extends  'base.html.twig' %}
+
+
+{% block title %}News{% endblock %}
+
+{% block body %}
+
+    <main id="main">
+
+        <section class="single-post-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9 post-content" data-aos="fade-up">
+
+                        <!-- ======= Single Post Content ======= -->
+                        <div class="single-post">
+                            <div class="post-meta"><span class="date">{{ news.category.categoryname }}</span>
+                                <span class="mx-1">&bullet;</span>
+                                <span>{{ news.publishedAt|date('M jS Y') }}</span> <br>
+                                <hr>
+                                <span class="date">{{ news.author.name }}</span> <span
+                                        class="date">{{ news.author.surname }}</span>
+                            </div>
+                            <div style="text-align: right; font-size: 28px">{{ news.viewCount }}</div>
+
+                            <h1 class="mb-5">{{ news.title }}</h1>
+
+                            {% if news.image != null %}
+                                <figure class="my-4">
+                                    <img src="{{ asset(news.image) }}" alt="" class="img-thumbnail">
+                                </figure>
+                            {% else %}
+                            {% endif %}
+                            <div class="container">
+                                <p>
+                                    <span class="firstcharacter">{{ news.content|slice(0, 1) }}</span>{{ news.content|slice(1)|nl2br }}
+                                </p>
+                            </div><!-- End Single Post Content -->
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+            </div>
+            </div>
+        </section>
+    </main><!-- End #main -->,
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="container-fluid mt-5">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Editor Note</h2>
+                    </div>
+
+                    <div class="card-body">
+                        <p>{{ editRequest.editorNote }}</p>
+                    </div>
+                </div>
+                <h3 class="d-flex justify-content-center">Do you want to edit this news?</h3>
+
+                <form method="post" class="mt-3 btn-group-lg d-flex justify-content-center">
+                    <button class="btn btn-warning" type="submit" name="accept" formaction="{{ path('app_accept_edit_request', {'id': news.id , 'editrequestid': editRequest.id}) }}">Accept</button>
+                    <button class="btn btn-danger" type="submit"
+                            formaction="{{ path('app_delete_news', {'id': news.id}) }}" name="delete">Delete
+                    </button>
+                    <button class="btn btn-info" type="submit" name="later" formaction="{{ path('app_profile') }}">
+                        Later
+                    </button>
+                </form>
+
+
+                <div class="">
+                    <div class="card-body">
+                        <h2>{{ news.title }}</h2>
+                        <h5>{{ news.category.categoryname }}</h5>
+
+                        {% if news.image %}
+                            <div class="centered-image">
+                                <img src="{{ asset(news.image) }}" alt="News Image"
+                                     class="img-fluid m-3">
+                            </div>
+                        {% else %}
+                            <p>No Image Available</p>
+                        {% endif %}
+                        <p>{{ news.content|raw|nl2br }}</p>
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block title %}
+    Review For Edit
+{% endblock %}
+{% block javascripts %}
+{% endblock %}
