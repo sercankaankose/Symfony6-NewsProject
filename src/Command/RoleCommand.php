@@ -25,9 +25,10 @@ class RoleCommand extends Command
         parent::__construct();
 
         $this->entityManager = $entityManager;
+       // $this->setName('app:update-roles');
+
     }
 
-    protected static $defaultName = 'app:update-user-roles';
 
     protected function configure(): void
     {
@@ -36,7 +37,7 @@ class RoleCommand extends Command
             ->setHelp('This command updates user roles .');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $userRepository = $this->entityManager->getRepository(User::class);
         $role = $this->entityManager->getRepository(Role::class)->findOneBy(['id' => RoleParams::ROLE_EDITOR]);

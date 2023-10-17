@@ -826,7 +826,7 @@
                                     {% if health is not empty %}
 
                                         <div class="post-entry-1">
-                                            <a href="{{ path('app_post',{'id':politic.id}) }}"><img
+                                            <a href="{{ path('app_post',{'id':health.id}) }}"><img
                                                         src="{{ health.image is empty ? asset('') : asset(health.image) }}"
                                                         alt=""
                                                         class="img-fluid"></a>
@@ -850,7 +850,7 @@
                             </div>
                             <div class="col-lg-4 border-start custom-border">
                                 {% for health in healthNews|slice(4, 3) %}
-                                    {% if politic is not empty %}
+                                    {% if health is not empty %}
 
                                         <div class="post-entry-1">
                                             <a href="{{ path('app_post',{'id':health.id}) }}"><img

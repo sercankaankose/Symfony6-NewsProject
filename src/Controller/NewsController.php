@@ -58,7 +58,6 @@ class NewsController extends AbstractController
             ['status' => 'published'],
             ['published_at' => 'DESC'],
             6);
-        $session = $request->getSession();
 
 
         if ($news && $news->getStatus() === 'published') {
@@ -95,13 +94,6 @@ class NewsController extends AbstractController
         $newsCategory = $news->getCategory();
 
 
-
-        $session = $request->getSession();
-
-
-
-
-
             return $this->render('look-post.html.twig', [
                 'categories' => $categories,
                 'news' => $news,
@@ -111,67 +103,7 @@ class NewsController extends AbstractController
         }
 
 
-    #[Route('/news/add', name: 'app_news')]
-    public function addNews(Request $request): Response
-    {
-        $user = $this->getUser();
 
-        if ($user && !$user->isVerified()) {
-            return $this->render('please-verify-email.html.twig', [
-                'user' => $user,
-            ]);
-        }
-
-        $addNews = new News();
-        $form = $this->createForm(NewsType::class, $addNews);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $addNews->setAuthor($user);
-            $addNews->setEditor(null);
-
-            $title = $form->get('title')->getData();
-            $addNews->setTitle($title);
-            $addNews->setStatus('waiting');
-
-
-            $now = new DateTimeImmutable();
-            $addNews->setCreatedAt($now);
-
-            $newsImage = $form->get('image')->getData();
-            if ($newsImage) {
-                $newFilename = uniqid() . '.' . $newsImage->guessExtension();
-
-                try {
-                    $newsImage->move(
-                        $this->getParameter('kernel.project_dir') . '/public/news',
-                        $newFilename
-                    );
-                    $addNews->setImage('/news/' . $newFilename);
-                } catch (FileException $e) {
-                    return new Response($e->getMessage());
-                }
-            }
-
-            $this->entityManager->persist($addNews);
-            $this->entityManager->flush();
-
-            $this->addFlash(
-                'newnews',
-                'News has been sent to the Editor.'
-            );
-
-            return $this->redirectToRoute('app_news');
-        }
-
-
-        return $this->render('news/addnews.html.twig', [
-            'form' => $form->createView(),
-        ]);
-
-
-    }
 
 
     #[Route('/news/edit/{id}', name: 'app_news_edit')]
@@ -497,11 +429,11 @@ $this->entityManager->persist($news);
             $this->entityManager->remove($news);
         }
 
-
             $this->entityManager->flush();
 
 
         return $this->redirectToRoute('app_profile');
     }
+
 
 }

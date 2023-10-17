@@ -61,11 +61,15 @@ class News
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $published_at = null;
 
+    #[ORM\OneToMany(mappedBy: 'news_id', targetEntity: Notification::class)]
+    private Collection $notifications;
+
 
 
     public function __construct()
     {
         $this->editRequests = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -225,6 +229,36 @@ class News
     public function setPublishedAt(?\DateTimeInterface $published_at): static
     {
         $this->published_at = $published_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
+    }
+
+    public function addNotifications(Notification $notifications): static
+    {
+        if (!$this->notifications->contains($notifications)) {
+            $this->notifications->add($notifications);
+            $notifications->setNewsId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotifications(Notification $notifications): static
+    {
+        if ($this->notifications->removeElement($notifications)) {
+            // set the owning side to null (unless already changed)
+            if ($notifications->getNewsId() === $this) {
+                $notifications->setNewsId(null);
+            }
+        }
 
         return $this;
     }

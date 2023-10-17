@@ -27,7 +27,6 @@ class denemeController extends AbstractController
         // $categories = $contentRepository->findAll();
 
         return $this->render('category.html.twig', [
-//        'categories' => $categories,
         ]);
     }
 

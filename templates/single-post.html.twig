@@ -1,10 +1,23 @@
 {% extends  'base.html.twig' %}
 
 
-{% block title %}News{% endblock %}
+{% block title %}Article{% endblock %}
 
 {% block body %}
-
+<style>
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+    figure[width*="1401"] {
+        max-width: 100px;
+    }
+    .content-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
     <main id="main">
 
         <section class="single-post-content">
@@ -27,7 +40,7 @@
                             <h1 class="mb-5">{{ news.title }}</h1>
 
                             {% if news.image != null %}
-                                <figure class="my-4">
+                                <figure class="content-container">
                                     <img src="{{ asset(news.image) }}" alt="" class="img-thumbnail">
                                 </figure>
                             {% else %}
