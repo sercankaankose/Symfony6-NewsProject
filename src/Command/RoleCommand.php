@@ -2,42 +2,57 @@
 
 namespace App\Command;
 
+use App\Entity\Role;
+use App\Entity\User;
+use App\Params\RoleParams;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'RoleCommand',
-    description: 'Add a short description for your command',
+    description: 'roles change',
 )]
 class RoleCommand extends Command
 {
+
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        parent::__construct();
+
+        $this->entityManager = $entityManager;
+    }
+
+    protected static $defaultName = 'app:update-user-roles';
+
     protected function configure(): void
     {
         $this
-            ->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')
-            ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description')
-        ;
+            ->setDescription('Update user roles condition')
+            ->setHelp('This command updates user roles .');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $io = new SymfonyStyle($input, $output);
-        $arg1 = $input->getArgument('arg1');
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $role = $this->entityManager->getRepository(Role::class)->findOneBy(['id' => RoleParams::ROLE_EDITOR]);
 
-        if ($arg1) {
-            $io->note(sprintf('You passed an argument: %s', $arg1));
+        $users = $userRepository->findAll();
+
+        foreach ($users as $user) {
+            $email = $user->getEmail();
+            if (strpos($email, '@yt.com') !== false) {
+                $user->addRoles($role);
+            }
         }
 
-        if ($input->getOption('option1')) {
-            // ...
-        }
+        $this->entityManager->flush();
 
-        $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
+        $output->writeln('User roles updated successfully.');
 
         return Command::SUCCESS;
     }

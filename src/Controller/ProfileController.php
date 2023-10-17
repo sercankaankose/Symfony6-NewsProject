@@ -4,20 +4,17 @@ namespace App\Controller;
 
 use App\Form\ChangePasswordProfileFormType;
 use App\Form\ProfileEditType;
-use App\Form\UserFormType;
 use App\Repository\EditRequestRepository;
 use App\Repository\NewsRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Finder\Exception\AccessDeniedException;
+
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ProfileController extends AbstractController
 {
@@ -145,6 +142,30 @@ class ProfileController extends AbstractController
             'changePasswordForm' => $form->createView(),
         ]);
     }
+
+
+    #[Route('/profile/user/{id}', name: 'app_public_profile')]
+    public function publicprofile(NewsRepository $newsRepository, UserRepository $userRepository, Request $request, int $id): Response
+    {
+        $user = $this->getUser();
+
+        $profileUser = $userRepository->find($id);
+
+
+        $userNews = $newsRepository->findBy(['author' => $profileUser, 'status' => 'published']);
+
+
+
+        $newsWithCategories = $newsRepository->findAllNewsWithCategories();
+
+        return $this->render('profile/published-profile.html.twig', [
+            'user' => $user,
+            'profileUser' => $profileUser,
+            'userNews' => $userNews,
+            'newsWithCategories' => $newsWithCategories,
+        ]);
+    }
+
 }
 
 

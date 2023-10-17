@@ -20,7 +20,7 @@ class denemeController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/category', name: 'app_category')]
+    #[Route('/categoryyyyyyyyyyyyy', name: 'app_category')]
     public function category(): Response
     {
 

@@ -14,12 +14,13 @@
 
                         <!-- ======= Single Post Content ======= -->
                         <div class="single-post">
-                            <div class="post-meta"><span class="date">{{ news.category.categoryname }}</span>
+                            <div class="post-meta" style="font-size: 16px"><span class="date">{{ news.category.categoryname }}</span>
                                 <span class="mx-1">&bullet;</span>
                                 <span>{{ news.publishedAt|date('M jS Y') }}</span> <br>
                                 <hr>
+                                <a href="{{ path('app_public_profile',{'id':news.author.id}) }}">
                                 <span class="date">{{ news.author.name }}</span> <span
-                                        class="date">{{ news.author.surname }}</span>
+                                        class="date">{{ news.author.surname }}</span></a>
                             </div>
                             <div style="text-align: right; font-size: 28px">{{ news.viewCount }}</div>
 

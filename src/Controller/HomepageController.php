@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Content;
 use App\Entity\News;
 use App\Entity\User;
 use App\Repository\UserRepository;
@@ -89,11 +90,21 @@ class HomepageController extends AbstractController
     public function editor(Security $security): Response
     {
         $user = $security->getUser();
+
+        if ($user === null) {
+            return $this->redirectToRoute('app_homepage');
+        }
+        $roles = $user->getRoles();
+
+        if (empty($roles)) {
+            return $this->redirectToRoute('app_homepage');
+        }
+
         return $this->render('editor/dashboard.html.twig', [
             'user' => $user
         ]);
-
     }
+
 
     #[Route('/sidebar', name: 'app_sidebar')]
     public function sidebar(Security $security): Response
@@ -133,23 +144,22 @@ class HomepageController extends AbstractController
 
     }
 
-//    #[Route('/category/{slug}', name: 'app_category')]
-//    public function category(string $slug, EntityManagerInterface $entityManager): Response
+//    #[Route("/category/{slug}", name: 'app_category')]
+//    public function category(string $slug = null, EntityManagerInterface $entityManager): Response
 //    {
-//        $categories = [
-//            'sports' => 1,
-//            'politics' => 2,
-//            'finance' => 3,
-//            'technology' => 4,
-//            'health' => 5,
-//        ];
+//        $slug = strtolower($slug);
+//        $categories = $entityManager->getRepository(Content::class)->findAll();
+//        $categoryMap = [];
+//        foreach ($categories as $category) {
+//            $categoryMap[$category->getSlug()] = $category->getId();
+//        }
 //
-//        if (!array_key_exists($slug, $categories)) {
+//        if (!array_key_exists($slug, $categoryMap)) {
 //            throw $this->createNotFoundException('Category not found');
 //        }
 //
 //        $categoryNews = $entityManager->getRepository(News::class)->findBy(
-//            ['status' => 'published', 'category' => $categories[$slug]],
+//            ['status' => 'published', 'category' => $categoryMap[$slug]],
 //            ['published_at' => 'DESC'],
 //            10
 //        );
@@ -159,5 +169,6 @@ class HomepageController extends AbstractController
 //            'categorySlug' => $slug,
 //        ]);
 //    }
+
 
 }

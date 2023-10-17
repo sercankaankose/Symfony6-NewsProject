@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block body %}
+    <style>
+        body {
+            overflow-x: hidden;
+        }
+    </style>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <div class="text-center">
+
+
+        <h1>Profile</h1>
+
+        <div class="row">
+            <div class="">
+                <img class="d-inline-block rounded-circle"
+                     src="{{ asset(profileUser.profileImage ?? 'img/profilepic.png') }}" alt="Profile Image"
+                     width="250" height="250">
+                <h2>{{ profileUser.name }} {{ profileUser.surname }}</h2>
+                <p>{{ profileUser.email }}</p>
+            </div>
+            <div class=""><br>
+                <h2>Published News</h2>
+
+                <div class="container-sm">
+                    <div class="row-cols-xl-auto">
+                        {% for news in userNews %}
+                            <div class="col-md-4 mb-3">
+                                <a href="{{ path('app_post', {'id': news.id}) }}">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h2 class="card-title">{{ news.title }}</h2>
+                                            <hr>
+                                            <span style="float:right; font-size: 20px">{{ news.publishedAt|date('M jS Y') }}</span>
+<br>
+<br>
+                                            <p class="card-text">{{ news.content|slice(0, 500) }}</p>
+                                            <div class="post-meta">
+                                                <span style="float:left;font-size: 14px" class="date">{{ news.category.categoryname }}</span>
+                                                <br>
+                                                <span style="float:right;font-size: 14px">{{ news.viewCount }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <br>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

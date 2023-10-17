@@ -118,9 +118,12 @@
                                     <div class="photo"><img src="{{ asset(new.author.profileimage) }}" alt=""
                                                             class="img-fluid">
                                     </div>
-                                    <div class="name">
-                                        <h3 class="m-0 p-0">{{ new.author.name }} {{ new.author.surname }}</h3>
-                                    </div>
+                                    <a href="{{ path('app_public_profile',{'id':new.author.id}) }}">
+
+                                        <div class="name">
+                                            <h3 class="m-0 p-0">{{ new.author.name }} {{ new.author.surname }}</h3>
+                                        </div>
+                                    </a>
                                 </div>
                             {% else %}
                             {% endif %}
@@ -138,7 +141,10 @@
                                         <a href="{{ path('app_post',{'id':new.id}) }}"><img
                                                     src="{{ asset(new.image) }}" alt=""
                                                     class="img-fluid"></a>
-                                        <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                        <a href="{{ path('app_public_profile',{'id':new.author.id}) }}">
+
+                                            <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                        </a>
                                         <div class="post-meta"><span class="date">{{ new.category.categoryname }}</span>
                                             <span
                                                     class="mx-1">&bullet;</span>
@@ -156,8 +162,10 @@
                                         <img src="{{ new.image is empty ? asset('') : asset(new.image) }}" alt=""
                                              class="img-fluid">
                                     </a>
+                                    <a href="{{ path('app_public_profile',{'id':new.author.id}) }}">
 
-                                    <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                        <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                    </a>
                                     <div class="post-meta"><span class="date">{{ new.category.categoryname }}</span>
                                         <span
                                                 class="mx-1">&bullet;</span>
@@ -178,7 +186,10 @@
                                                  class="img-fluid">
 
                                         </a>
-                                        <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                        <a href="{{ path('app_public_profile',{'id':new.author.id}) }}">
+
+                                            <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                        </a>
                                         <div class="post-meta"><span class="date">{{ new.category.categoryname }}</span>
                                             <span
                                                     class="mx-1">&bullet;</span>
@@ -195,7 +206,10 @@
                                     <a href="{{ path('app_post',{'id':new.id}) }}"><img
                                                 src="{{ new.image is empty ? asset('') : asset(new.image) }}" alt=""
                                                 class="img-fluid"></a>
-                                    <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                    <a href="{{ path('app_public_profile',{'id':new.author.id}) }}">
+
+                                        <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                    </a>
                                     <div class="post-meta"><span class="date">{{ new.category.categoryname }}</span>
                                         <span
                                                 class="mx-1">&bullet;</span>
@@ -226,6 +240,7 @@
                                                                     class="mx-1">&bullet;</span>
                                                             <span>{{ news.publishedAt|date('M jS Y') }}</span>
                                                         </div>
+
                                                         <span class="author">{{ news.author.name }} {{ news.author.surname }}</span>
                                                     </a>
                                                 </li>
@@ -269,8 +284,10 @@
                                         <span class="mx-1">&bullet;</span>
                                         <span>{{ sport.publishedAt|date('M jS Y') }}</span></div>
                                     <hr>
-                                    <span class="author mb-3 d-block">{{ sport.author.name }} {{ sport.author.surname }}</span>
+                                    <a href="{{ path('app_public_profile',{'id':sport.author.id}) }}">
 
+                                        <span class="author mb-3 d-block">{{ sport.author.name }} {{ sport.author.surname }}</span>
+                                    </a>
                                     <h3><a href="{{ path('app_post', {'id': sport.id}) }}">{{ sport.title }}</a></h3>
                                     <p>{{ sport.content|slice(0, 400) }}...</p>
                                     <div class="d-flex align-items-center author">
@@ -296,7 +313,9 @@
                                                     class="mx-1">&bullet;</span>
                                             <span>{{ sport.publishedAt|date('M jS Y') }}</span></div>
                                         <hr>
-                                        <span class="author mb-3 d-block">{{ sport.author.name }} {{ sport.author.surname }}</span>
+                                        <a href="{{ path('app_public_profile',{'id':sport.author.id}) }}">
+                                            <span class="author mb-3 d-block">{{ sport.author.name }} {{ sport.author.surname }}</span>
+                                        </a>
                                         <h2 class="mb-2"><a href="{{ path('app_post',{'id':sport.id}) }}">
                                                 {{ sport.title }}
                                             </a></h2>
@@ -312,7 +331,9 @@
                                         <span
                                                 class="mx-1">&bullet;</span>
                                         <span>{{ sport.publishedAt|date('M jS Y') }}</span></div>
-                                    <span class="author mb-3 d-block">{{ sport.author.name }} {{ sport.author.surname }}</span>
+                                    <a href="{{ path('app_public_profile',{'id':sport.author.id}) }}">
+                                        <span class="author mb-3 d-block">{{ sport.author.name }} {{ sport.author.surname }}</span>
+                                    </a>
                                     <h2 class="mb-2"><a
                                                 href="{{ path('app_post', {'id': sport.id}) }}">{{ sport.title }}</a>
                                     </h2>
@@ -333,7 +354,9 @@
                                                 class="mx-1">&bullet;</span>
                                         <span>{{ sport.publishedAt|date('M jS Y') }}</span></div>
                                     <hr>
-                                    <span class="author mb-3 d-block">{{ sport.author.name }} {{ sport.author.surname }}</span>
+                                    <a href="{{ path('app_public_profile',{'id':sport.author.id}) }}">
+                                        <span class="author mb-3 d-block">{{ sport.author.name }} {{ sport.author.surname }}</span>
+                                    </a>
                                     <h2 class="mb-2"><a href="{{ path('app_post',{'id':sport.id}) }}">
                                             {{ sport.title }}
                                         </a></h2>
@@ -353,7 +376,10 @@
                                                 class="mx-1">&bullet;</span>
                                         <span>{{ sport.publishedAt|date('M jS Y') }}</span></div>
                                     <hr>
-                                    <span class="author mb-3 d-block">{{ sport.author.name }} {{ sport.author.surname }}</span>
+                                    <a href="{{ path('app_public_profile',{'id':sport.author.id}) }}">
+
+                                        <span class="author mb-3 d-block">{{ sport.author.name }} {{ sport.author.surname }}</span>
+                                    </a>
                                     <h2 class="mb-2"><a href="{{ path('app_post',{'id':sport.id}) }}">
                                             {{ sport.title }}
                                         </a></h2>
@@ -388,7 +414,9 @@
                                         class="mx-1">&bullet;</span>
                                 <span>{{ politic.publishedAt|date('M jS Y') }}</span></div>
                             <hr>
-                            <span class="author mb-3 d-block">{{ politic.author.name }} {{ politic.author.surname }}</span>
+                            <a href="{{ path('app_public_profile',{'id':politic.author.id}) }}">
+                                <span class="author mb-3 d-block">{{ politic.author.name }} {{ politic.author.surname }}</span>
+                            </a>
                             <h2 class="mb-2"><a href="{{ path('app_post',{'id':politic.id}) }}">
                                     {{ politic.title }}
                                 </a></h2>
@@ -413,7 +441,10 @@
                                                         class="mx-1">&bullet;</span>
                                                 <span>{{ politic.publishedAt|date('M jS Y') }}</span></div>
                                             <hr>
-                                            <span class="post-meta">{{ politic.author.name }} {{ politic.author.surname }}</span>
+                                            <a href="{{ path('app_public_profile',{'id':politic.author.id}) }}">
+
+                                                <span class="post-meta">{{ politic.author.name }} {{ politic.author.surname }}</span>
+                                            </a>
                                             <h2><a href="{{ path('app_post',{'id':politic.id}) }}">
                                                     {{ politic.title }}
                                                 </a></h2>
@@ -438,7 +469,9 @@
                                                         class="mx-1">&bullet;</span>
                                                 <span>{{ politic.publishedAt|date('M jS Y') }}</span></div>
                                             <hr>
-                                            <span class="post-meta">{{ politic.author.name }} {{ politic.author.surname }}</span>
+                                            <a href="{{ path('app_public_profile',{'id':politic.author.id}) }}">
+                                                <span class="post-meta">{{ politic.author.name }} {{ politic.author.surname }}</span>
+                                            </a>
                                             <h2><a href="{{ path('app_post',{'id':politic.id}) }}">
                                                     {{ politic.title }}
                                                 </a></h2>
@@ -458,7 +491,9 @@
                                                         class="date">{{ politic.category.categoryname }}</span> <span
                                                         class="mx-1">&bullet;</span>
                                                 <span>{{ politic.publishedAt|date('M jS Y') }}</span></div>
-                                            <span class="author mb-3 d-block">{{ politic.author.name }} {{ politic.author.surname }}</span>
+                                            <a href="{{ path('app_public_profile',{'id':politic.author.id}) }}">
+                                                <span class="author mb-3 d-block">{{ politic.author.name }} {{ politic.author.surname }}</span>
+                                            </a>
                                             <h2 class="mb-2"><a href="{{ path('app_post',{'id':politic.id}) }}">
                                                     {{ politic.title }}
                                                 </a></h2>
@@ -502,9 +537,12 @@
                                     <p>{{ finance.content|slice(0, 250) }}...</p>
                                     <div class="d-flex align-items-center author">
 
-                                        <div class="name">
-                                            <h3 class="m-0 p-0">{{ finance.author.name }} {{ finance.author.surname }}</h3>
-                                        </div>
+                                        <a href="{{ path('app_public_profile',{'id':finance.author.id}) }}">
+                                            <div class="name">
+
+                                                <h3 class="m-0 p-0">{{ finance.author.name }} {{ finance.author.surname }}</h3>
+                                            </div>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -527,7 +565,9 @@
                                         <h2 class="mb-2"><a
                                                     href="{{ path('app_post',{'id':finance.id}) }}">{{ finance.title }}</a>
                                         </h2>
-                                        <span class="author mb-3 d-block">{{ finance.author.name }} {{ finance.author.surname }}</span>
+                                        <a href="{{ path('app_public_profile',{'id':finance.author.id}) }}">
+                                            <span class="author mb-3 d-block">{{ finance.author.name }} {{ finance.author.surname }}</span>
+                                        </a>
                                         <p class="mb-4 d-block">{{ finance.content|slice(0, 250) }}...</p>
                                     </div>
                                 {% else %}
@@ -551,7 +591,9 @@
                                         <h2 class="mb-2"><a
                                                     href="{{ path('app_post',{'id':finance.id}) }}">{{ finance.title }}</a>
                                         </h2>
-                                        <span class="author mb-3 d-block">{{ finance.author.name }} {{ finance.author.surname }}</span>
+                                        <a href="{{ path('app_public_profile',{'id':finance.author.id}) }}">
+                                            <span class="author mb-3 d-block">{{ finance.author.name }} {{ finance.author.surname }}</span>
+                                        </a>
                                         <p class="mb-4 d-block">{{ finance.content|slice(0, 250) }}...</div>
                                 {% else %}
                                 {% endif %}
@@ -570,8 +612,10 @@
                                     <h2><a href="{{ path('app_post',{'id':finance.id}) }}">
                                             {{ finance.title }}
                                         </a></h2>
+                                    <a href="{{ path('app_public_profile',{'id':finance.author.id}) }}">
+
                                     <span class="author mb-3 d-block">{{ finance.author.name }} {{ finance.author.surname }}</span>
-                                </div>
+                                    </a></div>
                             {% else %}
                             {% endif %}
                         {% endfor %}
@@ -597,7 +641,8 @@
 
                                     <a href="{{ path('app_post',{'id':new.id}) }}"><img src="{{ asset(new.image) }}"
                                                                                         alt=""
-                                                                                        class="img-fluid" style="padding: 10px"></a>
+                                                                                        class="img-fluid"
+                                                                                        style="padding: 10px"></a>
                                     <div class="post-meta"><span class="date">{{ new.category.categoryname }}</span>
                                         <span
                                                 class="mx-1">&bullet;</span>
@@ -610,9 +655,12 @@
                                         <div class="photo"><img src="{{ asset(new.author.profileimage) }}" alt=""
                                                                 class="img-fluid">
                                         </div>
+                                        <a href="{{ path('app_public_profile',{'id':new.author.id}) }}">
+
                                         <div class="name">
                                             <h3 class="m-0 p-0">{{ new.author.name }} {{ new.author.surname }}</h3>
                                         </div>
+                                        </a>
                                     </div>
                                 {% else %}
                                 {% endif %}
@@ -630,7 +678,9 @@
                                             <a href="{{ path('app_post',{'id':new.id}) }}"><img
                                                         src="{{ asset(new.image) }}" alt=""
                                                         class="img-fluid"></a>
+                                            <a href="{{ path('app_public_profile',{'id':new.author.id}) }}">
                                             <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                            </a>
                                             <div class="post-meta"><span
                                                         class="date">{{ new.category.categoryname }}</span>
                                                 <span
@@ -649,8 +699,8 @@
                                             <img src="{{ new.image is empty ? asset('') : asset(new.image) }}" alt=""
                                                  class="img-fluid">
                                         </a>
-
-                                        <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                        <a href="{{ path('app_public_profile',{'id':new.author.id}) }}">
+                                        </a><div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
                                         <div class="post-meta"><span class="date">{{ new.category.categoryname }}</span>
                                             <span
                                                     class="mx-1">&bullet;</span>
@@ -671,8 +721,9 @@
                                                      alt="" class="img-fluid">
 
                                             </a>
+                                            <a href="{{ path('app_public_profile',{'id':new.author.id}) }}">
                                             <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
-                                            <div class="post-meta"><span
+                                            </a><div class="post-meta"><span
                                                         class="date">{{ new.category.categoryname }}</span>
                                                 <span
                                                         class="mx-1">&bullet;</span>
@@ -689,7 +740,9 @@
                                         <a href="{{ path('app_post',{'id':new.id}) }}"><img
                                                     src="{{ new.image is empty ? asset('') : asset(new.image) }}" alt=""
                                                     class="img-fluid"></a>
+                                        <a href="{{ path('app_public_profile',{'id':new.author.id}) }}">
                                         <div class="post-meta">{{ new.author.name }} {{ new.author.surname }}</div>
+                                        </a>
                                         <div class="post-meta"><span class="date">{{ new.category.categoryname }}</span>
                                             <span
                                                     class="mx-1">&bullet;</span>
@@ -715,8 +768,9 @@
                                                 <h2><a href="{{ path('app_post',{'id':new.id}) }}">
                                                         {{ new.title }}
                                                     </a></h2>
+                                                <a href="{{ path('app_public_profile',{'id':new.author.id}) }}">
                                                 <span class="author mb-3 d-block">{{ new.author.name }} {{ new.author.surname }}</span>
-                                            </div>
+                                                </a>  </div>
                                         {% else %}
                                         {% endif %}
                                     {% endfor %}
@@ -732,7 +786,6 @@
             </div>
         </section>
         <!-- End Technology Category Section -->
-
 
 
         <!-- ======= Politics Category Section ======= -->
@@ -756,8 +809,9 @@
                                         class="mx-1">&bullet;</span>
                                 <span>{{ health.publishedAt|date('M jS Y') }}</span></div>
                             <hr>
+                            <a href="{{ path('app_public_profile',{'id':health.author.id}) }}">
                             <span class="author mb-3 d-block">{{ health.author.name }} {{ health.author.surname }}</span>
-                            <h2 class="mb-2"><a href="{{ path('app_post',{'id':health.id}) }}">
+                            </a> <h2 class="mb-2"><a href="{{ path('app_post',{'id':health.id}) }}">
                                     {{ health.title }}
                                 </a></h2>
                             <p class="mb-4 d-block">{{ health.content|slice(0, 600) }}...</p>
@@ -781,7 +835,9 @@
                                                         class="mx-1">&bullet;</span>
                                                 <span>{{ health.publishedAt|date('M jS Y') }}</span></div>
                                             <hr>
+                                            <a href="{{ path('app_public_profile',{'id':health.author.id}) }}">
                                             <span class="post-meta">{{ health.author.name }} {{ health.author.surname }}</span>
+                                            </a>
                                             <h2><a href="{{ path('app_post',{'id':health.id}) }}">
                                                     {{ health.title }}
                                                 </a></h2>
@@ -806,7 +862,9 @@
                                                         class="mx-1">&bullet;</span>
                                                 <span>{{ health.publishedAt|date('M jS Y') }}</span></div>
                                             <hr>
+                                            <a href="{{ path('app_public_profile',{'id':health.author.id}) }}">
                                             <span class="post-meta">{{ health.author.name }} {{ health.author.surname }}</span>
+                                            </a>
                                             <h2><a href="{{ path('app_post',{'id':health.id}) }}">
                                                     {{ health.title }}
                                                 </a></h2>
@@ -826,8 +884,9 @@
                                                         class="date">{{ health.category.categoryname }}</span> <span
                                                         class="mx-1">&bullet;</span>
                                                 <span>{{ health.publishedAt|date('M jS Y') }}</span></div>
+                                            <a href="{{ path('app_public_profile',{'id':health.author.id}) }}">
                                             <span class="author mb-3 d-block">{{ health.author.name }} {{ health.author.surname }}</span>
-                                            <h2 class="mb-2"><a href="{{ path('app_post',{'id':health.id}) }}">
+                                            </a> <h2 class="mb-2"><a href="{{ path('app_post',{'id':health.id}) }}">
                                                     {{ health   .title }}
                                                 </a></h2>
                                         </div>
