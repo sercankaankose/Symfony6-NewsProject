@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Entity\EditRequest;
 use App\Entity\News;
+use App\Entity\Notification;
 use App\Params\RoleParams;
 use App\Repository\EditRequestRepository;
 use App\Repository\NewsRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -129,6 +131,7 @@ class EditorController extends AbstractController
     }
 
 //----------------------------------------------------------------------------
+//function assigment
     #[Route("/editor/take/{id}", name: "editor_take")]
     public function takeActionfunction($id, NewsRepository $newsRepository, EntityManagerInterface $entityManager, Security $security): Response
     {
@@ -152,7 +155,20 @@ class EditorController extends AbstractController
             $news->setStatus('editorreview');
 
             $entityManager->persist($news);
-            $entityManager->flush();
+
+
+            $now = new DateTime();
+            $notify = new Notification();
+            $notify->setNewsId($news);
+            $notify->setStatus('editor_assigned');
+            $notify->setAuthor($news->getAuthor());
+            $notify->setEditor($user);
+
+            $notify->setDateAt($now);
+            $notify->setNotifications(0);
+            $this->entityManager->persist($notify);
+            $this->entityManager->flush();
+
             $this->addFlash('takesucces', 'News has been taken.');
 
         }
@@ -296,14 +312,30 @@ class EditorController extends AbstractController
         }
         $this->entityManager->flush();
 
+        $now = new DateTime();
+        $notify = new Notification();
+        $notify->setNewsId($news);
+        $notify->setDateAt($now);
+        $notify->setNotifications(0);
+
+        $notify->setAuthor($news->getAuthor());
+        $notify->setEditor($user);
+
         $flashMessage = '';
         if ($status == 'accepted') {
+            $notify->setStatus('status_accepted');
             $flashMessage = 'News accepted!';
+
         } elseif ($status == 'denied') {
+            $notify->setStatus('status_denied');
             $flashMessage = 'News denied.';
+
         } elseif ($status == 'sent_to_edit') {
+            $notify->setStatus('status_send_edit');
             $flashMessage = 'News sent for editing.';
         }
+        $this->entityManager->persist($notify);
+        $this->entityManager->flush();
 
         $this->addFlash('info', $flashMessage);
 
@@ -328,6 +360,7 @@ class EditorController extends AbstractController
         $newsList = $newsRepository->findBy(
             ['status' => 'accepted'],
         );
+
 
         $editor = $user->getId();
 
@@ -371,15 +404,26 @@ class EditorController extends AbstractController
         if (!in_array('Editor', $user->getRoles())) {
             throw $this->createAccessDeniedException('You do not have permission to access this page.');
         }
-        if ($news->getEditor() !== $user) {
-            throw $this->createAccessDeniedException('You are not the editor of this news.');
-        }
 
+        $now = new DateTime();
         $news->setStatus('published');
-        $news->setPublishedAt(new \DateTime());
+        $news->setPublishedAt($now);
         $news->setViewCount(0);
 
+        $now = new DateTime();
+        $notify = new Notification();
+        $notify->setNewsId($news);
+        $notify->setStatus('publish');
+        $notify->setAuthor($news->getAuthor());
+        $notify->setEditor($user);
+
+        $notify->setDateAt($now);
+        $notify->setNotifications(0);
+
+
+        $this->entityManager->persist($notify);
         $entityManager->persist($news);
+
         $entityManager->flush();
 
         $this->addFlash('publish', 'News has been made Public.');
@@ -456,6 +500,19 @@ class EditorController extends AbstractController
         $news->setStatus('editorreview');
 
         $this->entityManager->persist($news);
+
+        $now = new DateTime();
+        $notify = new Notification();
+        $notify->setNewsId($news);
+        $notify->setStatus('rereview');
+        $notify->setAuthor($news->getAuthor());
+        $notify->setEditor($user);
+
+        $notify->setDateAt($now);
+        $notify->setNotifications(0);
+
+
+        $this->entityManager->persist($notify);
         $this->entityManager->flush();
 
         $this->addFlash('publish', 'News has been made Public.');
@@ -561,6 +618,18 @@ class EditorController extends AbstractController
 
         $entityManager->persist($editRequest);
 
+        $now = new DateTime();
+        $notify = new Notification();
+        $notify->setNewsId($news);
+        $notify->setStatus('giving_time_for_edit');
+        $notify->setAuthor($news->getAuthor());
+        $notify->setEditor($user);
+
+        $notify->setDateAt($now);
+        $notify->setNotifications(0);
+
+
+        $this->entityManager->persist($notify);
         $entityManager->flush();
         $this->addFlash('timeiscoming', '1 Day Editing Time for the News');
 
@@ -585,22 +654,25 @@ class EditorController extends AbstractController
             return $this->redirectToRoute('app_denied');
         }
 
-        if ($user !== $news->getEditor()) {
-            throw $this->createAccessDeniedException('You do not have permission to access this news');
-        }
+
+
+        $notifys = $this->entityManager->getRepository(Notification::class)->findBy(['news' => $news]);
+
+            if ($notifys) {
+                foreach ($notifys as $notify) {
+                    $this->entityManager->remove($notify);
+                }
+            }
 
 
         $editRequests = $this->entityManager->getRepository(EditRequest::class)->findBy(['news' => $news]);
-        try {
+
             if ($editRequests) {
                 foreach ($editRequests as $editRequest) {
                     $this->entityManager->remove($editRequest);
                 }
             }
-        } catch (\Exception $e) {
-            echo $e->getMessage();
 
-        }
         $this->entityManager->flush();
         if ($news) {
             $news->setEditor(null);
@@ -609,8 +681,10 @@ class EditorController extends AbstractController
         }
         $this->entityManager->flush();
 
+
         $this->addFlash('type','News Deleted');
         return $this->redirectToRoute('app_denied');
     }
+
 
 }

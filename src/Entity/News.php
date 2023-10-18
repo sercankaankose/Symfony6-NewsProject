@@ -61,7 +61,7 @@ class News
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $published_at = null;
 
-    #[ORM\OneToMany(mappedBy: 'news_id', targetEntity: Notification::class)]
+    #[ORM\OneToMany(mappedBy: 'news', targetEntity: Notification::class)]
     private Collection $notifications;
 
 
@@ -70,6 +70,7 @@ class News
     {
         $this->editRequests = new ArrayCollection();
         $this->notifications = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -262,7 +263,6 @@ class News
 
         return $this;
     }
-
 
 
 }

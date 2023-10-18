@@ -4,11 +4,13 @@ namespace App\Controller;
 
 use App\Entity\EditRequest;
 use App\Entity\News;
+use App\Entity\Notification;
 use App\Form\NewsType;
 use App\Repository\ContentRepository;
 use App\Repository\EditRequestRepository;
 use App\Repository\NewsRepository;
 use App\Repository\UserRepository;
+use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -34,7 +36,8 @@ class NewsController extends AbstractController
     }
 
     #[Route('/post/{id}', name: 'app_post')]
-    public function post($id, Security $security, NewsRepository $newsRepository, EntityManagerInterface $entityManager, ContentRepository $contentRepository, Request $request): Response
+    public function post($id, Security $security, NewsRepository $newsRepository, EntityManagerInterface $entityManager,
+                         ContentRepository $contentRepository, Request $request): Response
     {
         $user = $security->getUser();
         $categories = $contentRepository->findAll();
@@ -82,28 +85,24 @@ class NewsController extends AbstractController
     }
 
     #[Route('/look/{id}', name: 'app_look')]
-    public function postlook($id, Security $security, NewsRepository $newsRepository, EntityManagerInterface $entityManager, ContentRepository $contentRepository, Request $request): Response
+    public function postlook($id, Security $security, NewsRepository $newsRepository, ContentRepository $contentRepository): Response
     {
         $user = $security->getUser();
         $categories = $contentRepository->findAll();
         $news = $newsRepository->findOneBy(['id' => $id]);
 
 
-
         $newsAuthor = $news->getAuthor();
         $newsCategory = $news->getCategory();
 
 
-            return $this->render('look-post.html.twig', [
-                'categories' => $categories,
-                'news' => $news,
-                'id' => $id,
+        return $this->render('look-post.html.twig', [
+            'categories' => $categories,
+            'news' => $news,
+            'id' => $id,
 
-            ]);
-        }
-
-
-
+        ]);
+    }
 
 
     #[Route('/news/edit/{id}', name: 'app_news_edit')]
@@ -169,12 +168,11 @@ class NewsController extends AbstractController
 
 
     #[Route('review/edit/news/{id}', name: 'app_news_send_edit')]
-    public function sendEditAction($id, EntityManagerInterface $entityManager, Security $security, EditRequestRepository $editRequestRepository): Response
+    public function sendEditAction($id, EntityManagerInterface $entityManager, Security $security): Response
     {
 
 
         $news = $entityManager->getRepository(News::class)->find($id);
-        $user = $security->getUser();
 
         $user = $security->getUser();
         $author = $news->getAuthor();
@@ -192,13 +190,7 @@ class NewsController extends AbstractController
 
         $editRequest = $this->entityManager->getRepository(EditRequest::class)->findOneBy(['news' => $id, 'status' => 'waiting']);
 
-//        $editRequest = $editRequestRepository->createQueryBuilder('e')
-//            ->where('e.news = :news')
-//            ->setParameter('news', $news)
-//            ->orderBy('e.request_at', 'DESC')
-//            ->setMaxResults(1)
-//            ->getQuery()
-//            ->getOneOrNullResult();
+
 
         return $this->render('news/reviewsendtoedit.html.twig', [
             'editRequest' => $editRequest,
@@ -236,6 +228,19 @@ class NewsController extends AbstractController
 
         $now = new \DateTime();
         $editRequest->setAcceptedAt($now);
+
+        $now = new DateTime();
+        $notify = new Notification();
+        $notify->setStatus('time_for_edit_accept');
+        $notify->setAuthor($author);
+        $notify->setEditor($user);
+
+        $notify->setDateAt($now);
+        $notify->setNotifications(0);
+
+
+        $this->entityManager->persist($notify);
+        $this->entityManager->flush();
 
 
         $this->entityManager->persist($editRequest);
@@ -425,11 +430,11 @@ class NewsController extends AbstractController
         $this->entityManager->flush();
         if ($news) {
             $news->setEditor(null);
-$this->entityManager->persist($news);
+            $this->entityManager->persist($news);
             $this->entityManager->remove($news);
         }
 
-            $this->entityManager->flush();
+        $this->entityManager->flush();
 
 
         return $this->redirectToRoute('app_profile');

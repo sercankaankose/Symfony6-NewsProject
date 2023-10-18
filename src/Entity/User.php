@@ -53,10 +53,20 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $profileImage = null;
 
+
+    #[ORM\OneToMany(mappedBy: 'editor', targetEntity: Notification::class)]
+    private Collection $notifyeditor;
+
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Notification::class)]
+    private Collection $NotifyAuthor;
+
+
     public function __construct()
     {
         $this->userRoles = new ArrayCollection();
         $this->news = new ArrayCollection();
+        $this->notifyeditor = new ArrayCollection();
+        $this->NotifyAuthor = new ArrayCollection();
     }
 
     public function getNews(): ArrayCollection
@@ -202,6 +212,67 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotifyeditor(): Collection
+    {
+        return $this->notifyeditor;
+    }
+
+    public function addNotifyeditor(Notification $notifyeditor): static
+    {
+        if (!$this->notifyeditor->contains($notifyeditor)) {
+            $this->notifyeditor->add($notifyeditor);
+            $notifyeditor->setEditor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotifyeditor(Notification $notifyeditor): static
+    {
+        if ($this->notifyeditor->removeElement($notifyeditor)) {
+            // set the owning side to null (unless already changed)
+            if ($notifyeditor->getEditor() === $this) {
+                $notifyeditor->setEditor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotifyAuthor(): Collection
+    {
+        return $this->NotifyAuthor;
+    }
+
+    public function addNotifyAuthor(Notification $notifyAuthor): static
+    {
+        if (!$this->NotifyAuthor->contains($notifyAuthor)) {
+            $this->NotifyAuthor->add($notifyAuthor);
+            $notifyAuthor->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotifyAuthor(Notification $notifyAuthor): static
+    {
+        if ($this->NotifyAuthor->removeElement($notifyAuthor)) {
+            // set the owning side to null (unless already changed)
+            if ($notifyAuthor->getAuthor() === $this) {
+                $notifyAuthor->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
 
 
 }

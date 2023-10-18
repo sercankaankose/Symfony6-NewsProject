@@ -1,38 +1,127 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Notification{% endblock %}
+{% block title %}Bildirimler{% endblock %}
 
 {% block body %}
     <br>
     <br>
     <br>
-    <br>
-    <br>
 
-    {# read and display just one flash message type #}
-    {% for message in app.flashes('notice') %}
-        <div class="flash-notice">
-            {{ message }}
-        </div>
-    {% endfor %}
+    <div class="container">
+        <h1 class="mt-5">Notification</h1>
+        <hr>
 
+        {% if notifications is not empty %}
+            <ul class="list-group mt-3">
+                {% for notification in notifications %}
+                    <li class="list-group-item">
+                        <a href="{{ path('app_look', {'id': notification.news.id}) }}">
+                            <div class="row">
 
-    {# read and display several types of flash messages #}
-    {% for label, messages in app.flashes(['success', 'warning']) %}
-        {% for message in messages %}
-            <div class="flash-{{ label }}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endfor %}
-
-    {# read and display all flash messages #}
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            <div class="flash-{{ label }}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endfor %}
+                                <div class="col-2">
+                                    <strong>Haber ID:</strong> {{ notification.news.id }}
+                                </div>
+                                <div class="col-2">
+                                    <strong></strong>
+                                    {% if notification.status == 'newAdd' %}
+                                        New news added
+                                    {% elseif notification.status == 'editor_assigned' %}
+                                        Editor tarafından atama yapılmıştır. Değerlendiriliyor.
+                                    {% elseif notification.status == 'status_accepted' %}
+                                        Haber Kabul Edildi!
+                                    {% elseif notification.status == 'status_denied' %}
+                                        Haber reddedildi
+                                    {% elseif notification.status == 'status_send_edit' %}
+                                        Haber Düzenlemeye gönderildi
+                                        <a href="{{ path('app_news_send_edit') }}">Düzenlemeleri Görüntüle</a>
+                                    {% elseif notification.status == 'publish' %}
+                                        Haber yayınlandı
+                                        <a href="{{ path('app_post') }}">Detayları Görüntüle</a>
+                                    {% else %}
+                                        {{ notification.status }}
+                                    {% endif %}
+                                </div>
+                                <div class="col-2">
+                                    <strong>Date:</strong> {{ notification.dateAt|date('d M Y') }}
+                                </div>
+                                <div class="col-2">
+                                    {% if notification.editor is not null %}
+                                        <strong>Editor:</strong>
+                                        <td>
+                                            {{ notification.editor.name }}
+                                            {{ notification.editor.surname }}
+                                        </td>
+                                    {% endif %}
+                                </div>
+                                <div class="col-2">
+                                    <strong>Author ID:</strong> {{ notification.author.name }}
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="alert alert-info mt-3">Henüz bildirim yok.</div>
+        {% endif %}
+    </div>
 {% endblock %}
 
+
+
+{#{% extends 'base.html.twig' %}#}
+
+{#{% block title %}Bildirimler#}
+{#{% endblock %}#}
+
+{#{% block body %}#}
+{#    <br>#}
+{#    <br>#}
+{#    <br>#}
+
+{#    <div class="container">#}
+{#        <h1 class="mt-5">Notification</h1>#}
+{#        <hr>#}
+
+{#        {% if notifications is not empty %}#}
+{#            <ul class="list-group mt-3">#}
+{#                {% for notification in notifications %}#}
+{#                    <li class="list-group-item">#}
+{#                        <a href="{{ path('app_look', {'id': notification.news.id}) }}">#}
+{#                            <div class="row">#}
+
+{#                                <div class="col-2">#}
+{#                                    <strong>Haber ID:</strong> {{ notification.news.id }}#}
+{#                                </div>#}
+{#                                <div class="col-2">#}
+{#                                    <strong>Status:</strong> {{ notification.status }}#}
+{#                                </div>#}
+{#                                <div class="col-2">#}
+{#                                    <strong>Date:</strong> {{ notification.dateAt|date('d M Y') }}#}
+{#                                </div>#}
+{#                                <div class="col-2">#}
+{#                                    {% if notification.editor is not null %}#}
+{#                                    <strong>Editor:</strong>#}
+{#                                    <td>#}
+
+{#                                        {{ notification.editor.name }}#}
+{#                                        {{ notification.editor.surname }}#}
+{#                                        {% else %}#}
+{#                                        {% endif %}#}
+{#                                    </td>#}
+
+{#                                </div>#}
+{#                                <div class="col-2">#}
+{#                                    <strong>Author ID:</strong> {{ notification.author.name }}#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </a>#}
+{#                    </li>#}
+{#                {% endfor %}#}
+{#            </ul>#}
+{#        {% else %}#}
+{#            <div class="alert alert-info mt-3">Henüz bildirim yok.</div>#}
+{#        {% endif %}#}
+{#    </div>#}
+
+{#{% endblock %}#}

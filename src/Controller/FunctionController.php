@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Notification;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,18 +22,13 @@ use App\Service\FlashCounterService;
 
 class FunctionController extends AbstractController
 {
-    private $flashCounterService;
-
-
-
     private  $UserRepository;
     private  $newsRepository;
     private $session;
     private EntityManagerInterface $entityManager;
 
-    public function __construct(FlashCounterService $flashCounterService ,RequestStack $requestStack, UserRepository $UserRepository, NewsRepository $newsRepository, EntityManagerInterface $entityManager)
+    public function __construct(RequestStack $requestStack, UserRepository $UserRepository, NewsRepository $newsRepository, EntityManagerInterface $entityManager)
     {
-        $this->flashCounterService = $flashCounterService;
         $this->session = $requestStack->getSession();
         $this->UserRepository = $UserRepository;
         $this->newsRepository = $newsRepository;
@@ -90,8 +87,17 @@ class FunctionController extends AbstractController
                     return new Response($e->getMessage());
                 }
             }
-
             $this->entityManager->persist($addNews);
+            $this->entityManager->flush();
+
+            $now = new DateTime();
+            $notify = new Notification();
+            $notify->setNewsId($addNews);
+            $notify->setStatus('NewAdd');
+            $notify->setDateAt($now);
+            $notify->setAuthor($addNews->getAuthor());
+            $notify->setNotifications(2);
+            $this->entityManager->persist($notify);
             $this->entityManager->flush();
 
             $this->addFlash(
@@ -100,9 +106,10 @@ class FunctionController extends AbstractController
             );
 
 
-            $notificationMessage = 'New news completed successfully: ';
-            $this->addFlash('notice', $notificationMessage);
-            $this->flashCounterService->incrementFlashCounter();
+
+//            $notificationMessage = 'New news completed successfully: ';
+//            $this->addFlash('notice', $notificationMessage);
+//            $this->flashCounterService->incrementFlashCounter();
 
             return $this->redirectToRoute('app_news');
         }
