@@ -231,12 +231,14 @@ class NewsController extends AbstractController
 
         $now = new DateTime();
         $notify = new Notification();
+        $notify->setNews($news);
         $notify->setStatus('time_for_edit_accept');
+        $notify->setDateAt($now);
+
         $notify->setAuthor($author);
         $notify->setEditor($user);
 
-        $notify->setDateAt($now);
-        $notify->setNotifications(0);
+        $notify->setNotifications(2);
 
 
         $this->entityManager->persist($notify);

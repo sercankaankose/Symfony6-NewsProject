@@ -32,6 +32,9 @@ class Notification
     #[ORM\ManyToOne(inversedBy: 'NotifyAuthor')]
     private ?User $author = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $count = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -106,6 +109,18 @@ class Notification
     public function setAuthor(?User $author): static
     {
         $this->author = $author;
+
+        return $this;
+    }
+
+    public function getCount(): ?int
+    {
+        return $this->count;
+    }
+
+    public function setCount(?int $count): static
+    {
+        $this->count = $count;
 
         return $this;
     }

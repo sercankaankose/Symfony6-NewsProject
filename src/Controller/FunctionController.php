@@ -92,7 +92,7 @@ class FunctionController extends AbstractController
 
             $now = new DateTime();
             $notify = new Notification();
-            $notify->setNewsId($addNews);
+            $notify->setNews($addNews);
             $notify->setStatus('NewAdd');
             $notify->setDateAt($now);
             $notify->setAuthor($addNews->getAuthor());

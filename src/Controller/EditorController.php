@@ -159,10 +159,11 @@ class EditorController extends AbstractController
 
             $now = new DateTime();
             $notify = new Notification();
-            $notify->setNewsId($news);
+            $notify->setNews($news);
             $notify->setStatus('editor_assigned');
             $notify->setAuthor($news->getAuthor());
             $notify->setEditor($user);
+            $notify->setCount(1);
 
             $notify->setDateAt($now);
             $notify->setNotifications(0);
@@ -240,6 +241,10 @@ class EditorController extends AbstractController
         if ($news->getEditor() !== $user) {
             throw $this->createAccessDeniedException('You are not the editor of this news.');
         }
+        if ($news->getStatus() !== 'editorreview') {
+            return $this->redirectToRoute('app_check');
+
+        }
 
         $waitingCount = $this->entityManager->getRepository(News::class)->count(['status' => 'waiting']);
         $editorReviewCount = $this->entityManager->getRepository(News::class)
@@ -314,9 +319,11 @@ class EditorController extends AbstractController
 
         $now = new DateTime();
         $notify = new Notification();
-        $notify->setNewsId($news);
+        $notify->setNews($news);
         $notify->setDateAt($now);
         $notify->setNotifications(0);
+        $notify->setCount(1);
+
 
         $notify->setAuthor($news->getAuthor());
         $notify->setEditor($user);
@@ -412,10 +419,12 @@ class EditorController extends AbstractController
 
         $now = new DateTime();
         $notify = new Notification();
-        $notify->setNewsId($news);
+        $notify->setNews($news);
         $notify->setStatus('publish');
         $notify->setAuthor($news->getAuthor());
         $notify->setEditor($user);
+        $notify->setCount(1);
+
 
         $notify->setDateAt($now);
         $notify->setNotifications(0);
@@ -503,10 +512,12 @@ class EditorController extends AbstractController
 
         $now = new DateTime();
         $notify = new Notification();
-        $notify->setNewsId($news);
+        $notify->setNews($news);
         $notify->setStatus('rereview');
         $notify->setAuthor($news->getAuthor());
         $notify->setEditor($user);
+        $notify->setCount(1);
+
 
         $notify->setDateAt($now);
         $notify->setNotifications(0);
@@ -620,7 +631,8 @@ class EditorController extends AbstractController
 
         $now = new DateTime();
         $notify = new Notification();
-        $notify->setNewsId($news);
+        $notify->setNews($news);
+        $notify->setCount(1);
         $notify->setStatus('giving_time_for_edit');
         $notify->setAuthor($news->getAuthor());
         $notify->setEditor($user);

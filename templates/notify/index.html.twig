@@ -1,127 +1,194 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Bildirimler{% endblock %}
+{% block title %}Notifications{% endblock %}
 
 {% block body %}
     <br>
     <br>
     <br>
+    <style>
 
+        .container {
+            font-size: 24px;
+        }
+
+        footer {
+            margin-top: 750px;
+        }
+
+        .custompagination {
+            display: inline-block;
+            text-align: center;
+        }
+
+        .custompagination a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            text-align: center;
+
+        }
+
+    </style>
     <div class="container">
         <h1 class="mt-5">Notification</h1>
         <hr>
+        <div class="aside-block">
 
-        {% if notifications is not empty %}
-            <ul class="list-group mt-3">
-                {% for notification in notifications %}
-                    <li class="list-group-item">
-                        <a href="{{ path('app_look', {'id': notification.news.id}) }}">
-                            <div class="row">
-
-                                <div class="col-2">
-                                    <strong>Haber ID:</strong> {{ notification.news.id }}
-                                </div>
-                                <div class="col-2">
-                                    <strong></strong>
-                                    {% if notification.status == 'newAdd' %}
-                                        New news added
-                                    {% elseif notification.status == 'editor_assigned' %}
-                                        Editor tarafından atama yapılmıştır. Değerlendiriliyor.
-                                    {% elseif notification.status == 'status_accepted' %}
-                                        Haber Kabul Edildi!
-                                    {% elseif notification.status == 'status_denied' %}
-                                        Haber reddedildi
-                                    {% elseif notification.status == 'status_send_edit' %}
-                                        Haber Düzenlemeye gönderildi
-                                        <a href="{{ path('app_news_send_edit') }}">Düzenlemeleri Görüntüle</a>
-                                    {% elseif notification.status == 'publish' %}
-                                        Haber yayınlandı
-                                        <a href="{{ path('app_post') }}">Detayları Görüntüle</a>
-                                    {% else %}
-                                        {{ notification.status }}
-                                    {% endif %}
-                                </div>
-                                <div class="col-2">
-                                    <strong>Date:</strong> {{ notification.dateAt|date('d M Y') }}
-                                </div>
-                                <div class="col-2">
-                                    {% if notification.editor is not null %}
-                                        <strong>Editor:</strong>
-                                        <td>
-                                            {{ notification.editor.name }}
-                                            {{ notification.editor.surname }}
-                                        </td>
-                                    {% endif %}
-                                </div>
-                                <div class="col-2">
-                                    <strong>Author ID:</strong> {{ notification.author.name }}
-                                </div>
-                            </div>
-                        </a>
+            <ul class="nav nav-pills custom-tab-nav mb-4" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pills-popular-tab" data-bs-toggle="pill"
+                            data-bs-target="#pills-popular" type="button" role="tab"
+                            aria-controls="pills-popular" aria-selected="true">User
+                    </button>
+                </li>
+                {% if 'Editor' in user.roles %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-trending-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-trending" type="button" role="tab"
+                                aria-controls="pills-trending" aria-selected="false">Editor
+                        </button>
                     </li>
-                {% endfor %}
+                {% endif %}
+
             </ul>
-        {% else %}
-            <div class="alert alert-info mt-3">Henüz bildirim yok.</div>
-        {% endif %}
+
+            <div class="tab-content" id="pills-tabContent">
+
+                <!-- User Notification -->
+                <div class="tab-pane fade show active" id="pills-popular" role="tabpanel"
+                     aria-labelledby="pills-popular-tab">
+
+
+                    {% if notifications is not empty %}
+                        <ul class="list-group mt-3 ">
+                            {% for notification in notifications %}
+                                <li class="list-group-item ">
+                                    <a href="{{ path('app_look', {'id': notification.news.id}) }}">
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <strong>News Id:</strong> {{ notification.news.id }}
+                                            </div>
+                                            <div class="col-6">
+                                                {% if notification.status == 'NewAdd' %}
+                                                    New news added
+                                                {% elseif notification.status == 'editor_assigned' %}
+                                                    Editor has been appointed. It is being evaluated.
+                                                {% elseif notification.status == 'status_accepted' %}
+                                                    News Accepted
+                                                {% elseif notification.status == 'status_denied' %}
+                                                    News Denied
+                                                {% elseif notification.status == 'status_send_edit' %}
+                                                    News sent back for editing
+                                                {% elseif notification.status == 'time_for_edit_accept' %}
+                                                    Time was requested for editing!
+                                                {% elseif notification.status == 'giving_time_for_edit' %}
+                                                    Time given for editing!
+                                                {% elseif notification.status == 'rereview' %}
+                                                    The news is being re-evaluated
+                                                {% elseif notification.status == 'publish' %}
+                                                    The news has been published
+                                                    <a href="{{ path('app_post', {'id': notification.news.id}) }}">Go to
+                                                        news</a>
+                                                {% else %}
+                                                    {{ notification.status }}
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-2">
+                                                <strong>Date:</strong> {{ notification.dateAt|date('H-i-d-m-Y') }}
+                                            </div>
+                                            <div class="col-2">
+                                                {% if notification.editor is not null %}
+                                                    <strong>Editor:</strong>
+                                                    <td>
+                                                        {{ notification.editor.name }}
+                                                        {{ notification.editor.surname }}
+                                                    </td>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                            {% endfor %}
+
+                        </ul>
+                    {% else %}
+                        <div class="alert alert-info mt-3">No notifications yet.</div>
+                    {% endif %}
+                    <div class="custom-pagination">
+                        {{ knp_pagination_render(notifications) }}
+                    </div>
+
+                </div>
+            </div>
+            <!-- End User Notification -->
+
+            <!-- Editor Notification -->
+            <div class="tab-pane fade" id="pills-trending" role="tabpanel" aria-labelledby="pills-trending-tab">
+
+                {% if editors is not empty %}
+                    <ul class="list-group mt-3 ">
+                        {% for editor in editors %}
+                            <li class="list-group-item ">
+                                <a href="{{ path('app_look', {'id': editor.news.id}) }}">
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <strong>News Id:</strong> {{ editor.news.id }}
+                                        </div>
+                                        <div class="col-6">
+                                            {% if editor.status == 'NewAdd' %}
+                                                New news added
+                                            {% elseif editor.status == 'editor_assigned' %}
+                                                Editor has been appointed. It is being evaluated.
+                                            {% elseif editor.status == 'status_accepted' %}
+                                                News Accepted
+                                            {% elseif editor.status == 'status_denied' %}
+                                                News Denied
+                                            {% elseif editor.status == 'status_send_edit' %}
+                                                News sent back for editing
+                                            {% elseif editor.status == 'time_for_edit_accept' %}
+                                                Time was requested for editing!
+                                            {% elseif editor.status == 'giving_time_for_edit' %}
+                                                Time given for editing!
+                                            {% elseif editor.status == 'rereview' %}
+                                                The news is being re-evaluated
+                                            {% elseif editor.status == 'publish' %}
+                                                The news has been published
+                                                <a href="{{ path('app_post', {'id': editor.news.id}) }}">Go to
+                                                    news</a>
+                                            {% else %}
+                                                {{ editor.status }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-2">
+                                            <strong>Date:</strong> {{ editor.dateAt|date('H-i-d-m-Y') }}
+                                        </div>
+                                        <div class="col-2">
+                                            {% if editor.editor is not null %}
+                                                <strong>Editor:</strong>
+                                                <td>
+                                                    {{ editor.editor.name }}
+                                                    {{ editor.editor.surname }}
+                                                </td>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        {% endfor %}
+
+                    </ul>
+                {% else %}
+                    <div class="alert alert-info mt-3">No notifications yet.</div>
+                {% endif %}
+                <div class="custom-pagination">
+                    {{ knp_pagination_render(editors) }}
+                </div>
+
+            </div>
+            </div>
+            <!-- End Editor -->
+        </div>
     </div>
 {% endblock %}
-
-
-
-{#{% extends 'base.html.twig' %}#}
-
-{#{% block title %}Bildirimler#}
-{#{% endblock %}#}
-
-{#{% block body %}#}
-{#    <br>#}
-{#    <br>#}
-{#    <br>#}
-
-{#    <div class="container">#}
-{#        <h1 class="mt-5">Notification</h1>#}
-{#        <hr>#}
-
-{#        {% if notifications is not empty %}#}
-{#            <ul class="list-group mt-3">#}
-{#                {% for notification in notifications %}#}
-{#                    <li class="list-group-item">#}
-{#                        <a href="{{ path('app_look', {'id': notification.news.id}) }}">#}
-{#                            <div class="row">#}
-
-{#                                <div class="col-2">#}
-{#                                    <strong>Haber ID:</strong> {{ notification.news.id }}#}
-{#                                </div>#}
-{#                                <div class="col-2">#}
-{#                                    <strong>Status:</strong> {{ notification.status }}#}
-{#                                </div>#}
-{#                                <div class="col-2">#}
-{#                                    <strong>Date:</strong> {{ notification.dateAt|date('d M Y') }}#}
-{#                                </div>#}
-{#                                <div class="col-2">#}
-{#                                    {% if notification.editor is not null %}#}
-{#                                    <strong>Editor:</strong>#}
-{#                                    <td>#}
-
-{#                                        {{ notification.editor.name }}#}
-{#                                        {{ notification.editor.surname }}#}
-{#                                        {% else %}#}
-{#                                        {% endif %}#}
-{#                                    </td>#}
-
-{#                                </div>#}
-{#                                <div class="col-2">#}
-{#                                    <strong>Author ID:</strong> {{ notification.author.name }}#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </a>#}
-{#                    </li>#}
-{#                {% endfor %}#}
-{#            </ul>#}
-{#        {% else %}#}
-{#            <div class="alert alert-info mt-3">Henüz bildirim yok.</div>#}
-{#        {% endif %}#}
-{#    </div>#}
-
-{#{% endblock %}#}
