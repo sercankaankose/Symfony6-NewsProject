@@ -157,17 +157,7 @@ class EditorController extends AbstractController
             $entityManager->persist($news);
 
 
-            $now = new DateTime();
-            $notify = new Notification();
-            $notify->setNews($news);
-            $notify->setStatus('editor_assigned');
-            $notify->setAuthor($news->getAuthor());
-            $notify->setEditor($user);
-            $notify->setCount(1);
 
-            $notify->setDateAt($now);
-            $notify->setNotifications(0);
-            $this->entityManager->persist($notify);
             $this->entityManager->flush();
 
             $this->addFlash('takesucces', 'News has been taken.');
@@ -319,30 +309,27 @@ class EditorController extends AbstractController
 
         $now = new DateTime();
         $notify = new Notification();
+        $notify->setIsRead(false);
+        $notify->setContent('Sent for news editing');
+        $notify->setAddedAt($now);
+        $notify->setPerson($news->getAuthor());
         $notify->setNews($news);
-        $notify->setDateAt($now);
-        $notify->setNotifications(0);
-        $notify->setCount(1);
+        $notify->setDestination('/review/edit/news/');
 
-
-        $notify->setAuthor($news->getAuthor());
-        $notify->setEditor($user);
+        $this->entityManager->persist($notify);
+        $this->entityManager->persist($editRequest);
+        $this->entityManager->flush();
 
         $flashMessage = '';
         if ($status == 'accepted') {
-            $notify->setStatus('status_accepted');
             $flashMessage = 'News accepted!';
 
         } elseif ($status == 'denied') {
-            $notify->setStatus('status_denied');
             $flashMessage = 'News denied.';
 
         } elseif ($status == 'sent_to_edit') {
-            $notify->setStatus('status_send_edit');
             $flashMessage = 'News sent for editing.';
         }
-        $this->entityManager->persist($notify);
-        $this->entityManager->flush();
 
         $this->addFlash('info', $flashMessage);
 
@@ -419,16 +406,12 @@ class EditorController extends AbstractController
 
         $now = new DateTime();
         $notify = new Notification();
+        $notify->setIsRead(false);
+        $notify->setContent('News Published');
+        $notify->setAddedAt($now);
+        $notify->setPerson($news->getAuthor());
         $notify->setNews($news);
-        $notify->setStatus('publish');
-        $notify->setAuthor($news->getAuthor());
-        $notify->setEditor($user);
-        $notify->setCount(1);
-
-
-        $notify->setDateAt($now);
-        $notify->setNotifications(0);
-
+        $notify->setDestination('/post/');
 
         $this->entityManager->persist($notify);
         $entityManager->persist($news);
@@ -511,19 +494,7 @@ class EditorController extends AbstractController
         $this->entityManager->persist($news);
 
         $now = new DateTime();
-        $notify = new Notification();
-        $notify->setNews($news);
-        $notify->setStatus('rereview');
-        $notify->setAuthor($news->getAuthor());
-        $notify->setEditor($user);
-        $notify->setCount(1);
 
-
-        $notify->setDateAt($now);
-        $notify->setNotifications(0);
-
-
-        $this->entityManager->persist($notify);
         $this->entityManager->flush();
 
         $this->addFlash('publish', 'News has been made Public.');
@@ -631,15 +602,12 @@ class EditorController extends AbstractController
 
         $now = new DateTime();
         $notify = new Notification();
+        $notify->setIsRead(false);
+        $notify->setContent('Time was given to edit the news');
+        $notify->setAddedAt($now);
+        $notify->setPerson($news->getAuthor());
         $notify->setNews($news);
-        $notify->setCount(1);
-        $notify->setStatus('giving_time_for_edit');
-        $notify->setAuthor($news->getAuthor());
-        $notify->setEditor($user);
-
-        $notify->setDateAt($now);
-        $notify->setNotifications(0);
-
+        $notify->setDestination('/editing/news/');
 
         $this->entityManager->persist($notify);
         $entityManager->flush();

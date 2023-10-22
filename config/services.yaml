@@ -8,10 +8,14 @@ parameters:
 # config/services.yaml
 services:
 #  App\Security\CustomAccessDeniedHandler: # Hizmetin sınıf adı
-#    arguments: ['@twig', '@security.http_utils'] # Hizmetin kurulum argümanları
+#    arguments: ['@Twig', '@security.http_utils'] # Hizmetin kurulum argümanları
   App\Validator\Constraints\PasswordPolicyValidator:
     tags: [ validator.constraint_validator ]
 
+
+  App\Twig\NotificationExtension:
+    arguments:
+      $entityManager: '@doctrine.orm.entity_manager'
 
 
   # default configuration for services in *this* file

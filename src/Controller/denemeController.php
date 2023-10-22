@@ -20,10 +20,9 @@ class denemeController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/categoryyyyyyyyyyyyy', name: 'app_category')]
+    #[Route('/category', name: 'app_category')]
     public function category(): Response
     {
-
         // $categories = $contentRepository->findAll();
 
         return $this->render('category.html.twig', [
@@ -33,9 +32,7 @@ class denemeController extends AbstractController
     #[Route('/about', name: 'app_about')]
     public function about(): Response
     {
-
         // $categories = $contentRepository->findAll();
-
         return $this->render('about.html.twig', [
 //        'categories' => $categories,
         ]);

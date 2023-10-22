@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Content;
 use App\Entity\News;
+use App\Entity\Notification;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -69,7 +70,6 @@ class HomepageController extends AbstractController
             10
         );
 
-
         return $this->render('homepage/index.html.twig', [
             'user' => $user,
             'popularNews' => $popularNews,
@@ -80,11 +80,8 @@ class HomepageController extends AbstractController
             'technologyNews' => $technologyNews,
             'healthNews' => $healthNews,
 
-
         ]);
     }
-
-
 
     #[Route('/dashboard', name: 'app_dashboard')]
     public function editor(Security $security): Response
@@ -99,6 +96,7 @@ class HomepageController extends AbstractController
         if (empty($roles)) {
             return $this->redirectToRoute('app_homepage');
         }
+
 
         return $this->render('editor/dashboard.html.twig', [
             'user' => $user
@@ -144,6 +142,13 @@ class HomepageController extends AbstractController
 
     }
 
+
+
+
+
+
+
+
 //    #[Route("/category/{slug}", name: 'app_category')]
 //    public function category(string $slug = null, EntityManagerInterface $entityManager): Response
 //    {
@@ -164,7 +169,7 @@ class HomepageController extends AbstractController
 //            10
 //        );
 //
-//        return $this->render('homepage/category.html.twig', [
+//        return $this->render('homepage/category.html.Twig', [
 //            'categoryNews' => $categoryNews,
 //            'categorySlug' => $slug,
 //        ]);

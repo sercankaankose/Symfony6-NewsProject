@@ -8,52 +8,47 @@ use App\Params\RoleParams;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: 'RoleCommand',
-    description: 'roles change',
+    name: 'SetUserRole',
+    description: 'Set a user role by email',
 )]
 class RoleCommand extends Command
 {
-
     private $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
         parent::__construct();
-
         $this->entityManager = $entityManager;
-       // $this->setName('app:update-roles');
-
     }
-
 
     protected function configure(): void
     {
         $this
-            ->setDescription('Update user roles condition')
-            ->setHelp('This command updates user roles .');
+            ->addArgument('email', InputArgument::REQUIRED, 'User email to set the role for')
+            ->setDescription('Set a user role by email')
+            ->setHelp('This command sets a specific role for a user by email.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $email = $input->getArgument('email');
         $userRepository = $this->entityManager->getRepository(User::class);
         $role = $this->entityManager->getRepository(Role::class)->findOneBy(['id' => RoleParams::ROLE_EDITOR]);
 
-        $users = $userRepository->findAll();
+        $user = $userRepository->findOneBy(['email' => $email]);
 
-        foreach ($users as $user) {
-            $email = $user->getEmail();
-            if (strpos($email, '@yt.com') !== false) {
-                $user->addRoles($role);
-            }
+        if ($user) {
+            $user->addRoles($role);
+            $this->entityManager->flush();
+            $output->writeln('Role updated for user with email: ' . $email);
+        } else {
+            $output->writeln('User with email ' . $email . ' not found.');
         }
-
-        $this->entityManager->flush();
-
-        $output->writeln('User roles updated successfully.');
 
         return Command::SUCCESS;
     }

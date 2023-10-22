@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\EditRequest;
 use App\Entity\News;
 use App\Entity\Notification;
+use App\Entity\User;
 use App\Form\NewsType;
 use App\Repository\ContentRepository;
 use App\Repository\EditRequestRepository;
@@ -104,6 +105,84 @@ class NewsController extends AbstractController
         ]);
     }
 
+    #[Route('/news/add', name: 'app_news')]
+    public function addNews(Request $request): Response
+    {
+        $user = $this->getUser();
+
+        if ($user && !$user->isVerified()) {
+            return $this->render('please-verify-email.html.twig', [
+                'user' => $user,
+            ]);
+        }
+
+        $addNews = new News();
+        $form = $this->createForm(NewsType::class, $addNews);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $addNews->setAuthor($user);
+            $addNews->setEditor(null);
+
+            $title = $form->get('title')->getData();
+            $addNews->setTitle($title);
+            $addNews->setStatus('waiting');
+
+
+            $now = new DateTimeImmutable();
+            $addNews->setCreatedAt($now);
+
+            $newsImage = $form->get('image')->getData();
+            if ($newsImage) {
+                $newFilename = uniqid() . '.' . $newsImage->guessExtension();
+
+                try {
+                    $newsImage->move(
+                        $this->getParameter('kernel.project_dir') . '/public/news',
+                        $newFilename
+                    );
+                    $addNews->setImage('/news/' . $newFilename);
+                } catch (FileException $e) {
+                    return new Response($e->getMessage());
+                }
+            }
+            $this->entityManager->persist($addNews);
+
+            $now = new DateTime();
+            $editorRole = 'Editor';
+            $editors = $this->entityManager->getRepository(User::class)
+                ->createQueryBuilder('u')
+                ->join('u.userRoles', 'r')
+                ->where('r.role_name = :role')
+                ->setParameter('role', $editorRole)
+                ->getQuery()
+                ->getResult();
+
+            foreach ($editors as $editor) {
+                $notification = new Notification();
+                $notification->setPerson($editor);
+                $notification->setContent('New News Added');
+                $notification->setIsRead(false);
+                $notification->setAddedAt($now);
+                $notification->setNews($addNews);
+                $notification->setDestination('/editor/review');
+                $this->entityManager->persist($notification);
+            }
+
+            $this->entityManager->flush();
+
+            $this->addFlash(
+                'newnews',
+                'News has been sent to the Editor.'
+            );
+            return $this->redirectToRoute('app_news');
+        }
+
+        return $this->render('news/addnews.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
 
     #[Route('/news/edit/{id}', name: 'app_news_edit')]
     public function editWaitingNews($id, EntityManagerInterface $entityManager, Security $security, Request $request): Response
@@ -171,12 +250,10 @@ class NewsController extends AbstractController
     public function sendEditAction($id, EntityManagerInterface $entityManager, Security $security): Response
     {
 
-
         $news = $entityManager->getRepository(News::class)->find($id);
 
         $user = $security->getUser();
         $author = $news->getAuthor();
-
 
         if ($user !== $author) {
             throw $this->createAccessDeniedException('You do not have permission to access this news.');
@@ -184,13 +261,9 @@ class NewsController extends AbstractController
         if (!$news || $news->getStatus() !== 'sent_to_edit') {
             $this->addFlash('permıserror', 'You do not have permission to edit this news.');
             return $this->redirectToRoute('app_profile');
-
         }
 
-
         $editRequest = $this->entityManager->getRepository(EditRequest::class)->findOneBy(['news' => $id, 'status' => 'waiting']);
-
-
 
         return $this->render('news/reviewsendtoedit.html.twig', [
             'editRequest' => $editRequest,
@@ -199,7 +272,6 @@ class NewsController extends AbstractController
         ]);
 
     }
-
 //    ----------------------------------------
     #[Route('/accept/edit/{id}/{editrequestid}', name: 'app_accept_edit_request')]
     public function acceptEditRequest($id, Security $security, $editrequestid): Response
@@ -231,20 +303,14 @@ class NewsController extends AbstractController
 
         $now = new DateTime();
         $notify = new Notification();
+        $notify->setIsRead(false);
+        $notify->setContent('Time was requested to edit the news');
+        $notify->setAddedAt($now);
+        $notify->setPerson($news->getEditor());
         $notify->setNews($news);
-        $notify->setStatus('time_for_edit_accept');
-        $notify->setDateAt($now);
-
-        $notify->setAuthor($author);
-        $notify->setEditor($user);
-
-        $notify->setNotifications(2);
-
+        $notify->setDestination('/news/edit/request');
 
         $this->entityManager->persist($notify);
-        $this->entityManager->flush();
-
-
         $this->entityManager->persist($editRequest);
         $this->entityManager->flush();
         $this->addFlash('permıserror', 'Time was requested for editing');
@@ -314,6 +380,17 @@ class NewsController extends AbstractController
                     return new Response($e->getMessage());
                 }
             }
+
+            $now = new DateTime();
+            $notify = new Notification();
+            $notify->setIsRead(false);
+            $notify->setContent('News has been corrected');
+            $notify->setAddedAt($now);
+            $notify->setPerson($news->getEditor());
+            $notify->setNews($news);
+            $notify->setDestination('/editor/Check/News');
+
+            $this->entityManager->persist($notify);
             $this->entityManager->persist($news);
             $this->entityManager->flush();
 
@@ -417,18 +494,22 @@ class NewsController extends AbstractController
             throw $this->createAccessDeniedException('You do not have permission to access this news');
         }
 
+        $notifys = $this->entityManager->getRepository(Notification::class)->findBy(['news' => $news]);
+
+        if ($notifys) {
+            foreach ($notifys as $notify) {
+                $this->entityManager->remove($notify);
+            }
+        }
 
         $editRequests = $this->entityManager->getRepository(EditRequest::class)->findBy(['news' => $news]);
-        try {
-            if ($editRequests) {
-                foreach ($editRequests as $editRequest) {
-                    $this->entityManager->remove($editRequest);
-                }
-            }
-        } catch (\Exception $e) {
-            echo $e->getMessage();
 
+        if ($editRequests) {
+            foreach ($editRequests as $editRequest) {
+                $this->entityManager->remove($editRequest);
+            }
         }
+
         $this->entityManager->flush();
         if ($news) {
             $news->setEditor(null);

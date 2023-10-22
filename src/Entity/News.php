@@ -64,6 +64,9 @@ class News
     #[ORM\OneToMany(mappedBy: 'news', targetEntity: Notification::class)]
     private Collection $notifications;
 
+//    #[ORM\OneToMany(mappedBy: 'news', targetEntity: Notification::class)]
+//    private Collection $notifications;
+
 
 
     public function __construct()
@@ -234,35 +237,65 @@ class News
         return $this;
     }
 
-    /**
-     * @return Collection<int, Notification>
-     */
-    public function getNotifications(): Collection
-    {
-        return $this->notifications;
+//    /**
+//     * @return Collection<int, Notification>
+//     */
+//    public function getNotifications(): Collection
+//    {
+//        return $this->notifications;
+//    }
+//
+//    public function addNotifications(Notification $notifications): static
+//    {
+//        if (!$this->notifications->contains($notifications)) {
+//            $this->notifications->add($notifications);
+//            $notifications->setNewsId($this);
+//        }
+//
+//        return $this;
+//    }
+//
+//    public function removeNotifications(Notification $notifications): static
+//    {
+//        if ($this->notifications->removeElement($notifications)) {
+//            // set the owning side to null (unless already changed)
+//            if ($notifications->getNewsId() === $this) {
+//                $notifications->setNewsId(null);
+//            }
+//        }
+//
+//        return $this;
+//    }
+//
+
+/**
+ * @return Collection<int, Notification>
+ */
+public function getNotifications(): Collection
+{
+    return $this->notifications;
+}
+
+public function addNotification(Notification $notification): static
+{
+    if (!$this->notifications->contains($notification)) {
+        $this->notifications->add($notification);
+        $notification->setNews($this);
     }
 
-    public function addNotifications(Notification $notifications): static
-    {
-        if (!$this->notifications->contains($notifications)) {
-            $this->notifications->add($notifications);
-            $notifications->setNewsId($this);
+    return $this;
+}
+
+public function removeNotification(Notification $notification): static
+{
+    if ($this->notifications->removeElement($notification)) {
+        // set the owning side to null (unless already changed)
+        if ($notification->getNews() === $this) {
+            $notification->setNews(null);
         }
-
-        return $this;
     }
 
-    public function removeNotifications(Notification $notifications): static
-    {
-        if ($this->notifications->removeElement($notifications)) {
-            // set the owning side to null (unless already changed)
-            if ($notifications->getNewsId() === $this) {
-                $notifications->setNewsId(null);
-            }
-        }
-
-        return $this;
-    }
-
+    return $this;
+}
 
 }

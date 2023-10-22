@@ -16,10 +16,6 @@
             margin-top: 750px;
         }
 
-        .custompagination {
-            display: inline-block;
-            text-align: center;
-        }
 
         .custompagination a {
             color: black;
@@ -36,159 +32,104 @@
         <hr>
         <div class="aside-block">
 
-            <ul class="nav nav-pills custom-tab-nav mb-4" id="pills-tab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="pills-popular-tab" data-bs-toggle="pill"
-                            data-bs-target="#pills-popular" type="button" role="tab"
-                            aria-controls="pills-popular" aria-selected="true">User
-                    </button>
-                </li>
-                {% if 'Editor' in user.roles %}
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="pills-trending-tab" data-bs-toggle="pill"
-                                data-bs-target="#pills-trending" type="button" role="tab"
-                                aria-controls="pills-trending" aria-selected="false">Editor
-                        </button>
-                    </li>
-                {% endif %}
-
-            </ul>
-
-            <div class="tab-content" id="pills-tabContent">
-
                 <!-- User Notification -->
-                <div class="tab-pane fade show active" id="pills-popular" role="tabpanel"
-                     aria-labelledby="pills-popular-tab">
 
+            {% if notifications is not empty %}
+                <ul class="list-group mt-3">
+{#                    <a href="{{ path('app_redirect_notification', {id: notifications.news.id}) }}">#}
+                    {% for notification in notifications %}
+                        <li class="list-group-item">
 
-                    {% if notifications is not empty %}
-                        <ul class="list-group mt-3 ">
-                            {% for notification in notifications %}
-                                <li class="list-group-item ">
-                                    <a href="{{ path('app_look', {'id': notification.news.id}) }}">
-                                        <div class="row">
-                                            <div class="col-2">
-                                                <strong>News Id:</strong> {{ notification.news.id }}
-                                            </div>
-                                            <div class="col-6">
-                                                {% if notification.status == 'NewAdd' %}
-                                                    New news added
-                                                {% elseif notification.status == 'editor_assigned' %}
-                                                    Editor has been appointed. It is being evaluated.
-                                                {% elseif notification.status == 'status_accepted' %}
-                                                    News Accepted
-                                                {% elseif notification.status == 'status_denied' %}
-                                                    News Denied
-                                                {% elseif notification.status == 'status_send_edit' %}
-                                                    News sent back for editing
-                                                {% elseif notification.status == 'time_for_edit_accept' %}
-                                                    Time was requested for editing!
-                                                {% elseif notification.status == 'giving_time_for_edit' %}
-                                                    Time given for editing!
-                                                {% elseif notification.status == 'rereview' %}
-                                                    The news is being re-evaluated
-                                                {% elseif notification.status == 'publish' %}
-                                                    The news has been published
-                                                    <a href="{{ path('app_post', {'id': notification.news.id}) }}">Go to
-                                                        news</a>
-                                                {% else %}
-                                                    {{ notification.status }}
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-2">
-                                                <strong>Date:</strong> {{ notification.dateAt|date('H-i-d-m-Y') }}
-                                            </div>
-                                            <div class="col-2">
-                                                {% if notification.editor is not null %}
-                                                    <strong>Editor:</strong>
-                                                    <td>
-                                                        {{ notification.editor.name }}
-                                                        {{ notification.editor.surname }}
-                                                    </td>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                            {% endfor %}
+                                {{ notification.content }}
+                            <div class="row">
+                                <div class="col-2">
+{#                                    <strong>Date:</strong> {{ notification.added_at|date('H:i d-m-Y') }}#}
 
-                        </ul>
-                    {% else %}
-                        <div class="alert alert-info mt-3">No notifications yet.</div>
-                    {% endif %}
+                                </div>
+                                <div class="col-2">
+
+                                </div>
+                            </div>
+                        </li></a>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="alert alert-info mt-3">No notifications yet.</div>
+            {% endif %}
+
                     <div class="custom-pagination">
                         {{ knp_pagination_render(notifications) }}
                     </div>
 
-                </div>
-            </div>
             <!-- End User Notification -->
 
             <!-- Editor Notification -->
-            <div class="tab-pane fade" id="pills-trending" role="tabpanel" aria-labelledby="pills-trending-tab">
+{#            <div class="tab-content" id="pills-tabContent">#}
+{#                <div class="tab-pane fade" id="pills-trending" role="tabpanel" aria-labelledby="pills-trending-tab">#}
 
-                {% if editors is not empty %}
-                    <ul class="list-group mt-3 ">
-                        {% for editor in editors %}
-                            <li class="list-group-item ">
-                                <a href="{{ path('app_look', {'id': editor.news.id}) }}">
-                                    <div class="row">
-                                        <div class="col-2">
-                                            <strong>News Id:</strong> {{ editor.news.id }}
-                                        </div>
-                                        <div class="col-6">
-                                            {% if editor.status == 'NewAdd' %}
-                                                New news added
-                                            {% elseif editor.status == 'editor_assigned' %}
-                                                Editor has been appointed. It is being evaluated.
-                                            {% elseif editor.status == 'status_accepted' %}
-                                                News Accepted
-                                            {% elseif editor.status == 'status_denied' %}
-                                                News Denied
-                                            {% elseif editor.status == 'status_send_edit' %}
-                                                News sent back for editing
-                                            {% elseif editor.status == 'time_for_edit_accept' %}
-                                                Time was requested for editing!
-                                            {% elseif editor.status == 'giving_time_for_edit' %}
-                                                Time given for editing!
-                                            {% elseif editor.status == 'rereview' %}
-                                                The news is being re-evaluated
-                                            {% elseif editor.status == 'publish' %}
-                                                The news has been published
-                                                <a href="{{ path('app_post', {'id': editor.news.id}) }}">Go to
-                                                    news</a>
-                                            {% else %}
-                                                {{ editor.status }}
-                                            {% endif %}
-                                        </div>
-                                        <div class="col-2">
-                                            <strong>Date:</strong> {{ editor.dateAt|date('H-i-d-m-Y') }}
-                                        </div>
-                                        <div class="col-2">
-                                            {% if editor.editor is not null %}
-                                                <strong>Editor:</strong>
-                                                <td>
-                                                    {{ editor.editor.name }}
-                                                    {{ editor.editor.surname }}
-                                                </td>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                        {% endfor %}
+{#                    {% if editors is not empty %}#}
+{#                        <ul class="list-group mt-3 ">#}
+{#                            {% for editor in editors %}#}
+{#                                <li class="list-group-item ">#}
+{#                                    <a href="{{ path('app_look', {'id': editor.news.id}) }}">#}
+{#                                        <div class="row">#}
+{#                                            <div class="col-2">#}
+{#                                                <strong>News Id:</strong> {{ editor.news.id }}#}
+{#                                            </div>#}
+{#                                            <div class="col-6">#}
+{#                                                {% if editor.status == 'NewAdd' %}#}
+{#                                                    New news added#}
+{#                                                {% elseif editor.status == 'editor_assigned' %}#}
+{#                                                    Editor has been appointed. It is being evaluated.#}
+{#                                                {% elseif editor.status == 'status_accepted' %}#}
+{#                                                    News Accepted#}
+{#                                                {% elseif editor.status == 'status_denied' %}#}
+{#                                                    News Denied#}
+{#                                                {% elseif editor.status == 'status_send_edit' %}#}
+{#                                                    News sent back for editing#}
+{#                                                {% elseif editor.status == 'time_for_edit_accept' %}#}
+{#                                                    Time was requested for editing!#}
+{#                                                {% elseif editor.status == 'giving_time_for_edit' %}#}
+{#                                                    Time given for editing!#}
+{#                                                {% elseif editor.status == 'rereview' %}#}
+{#                                                    The news is being re-evaluated#}
+{#                                                {% elseif editor.status == 'publish' %}#}
+{#                                                    The news has been published#}
+{#                                                    <a href="{{ path('app_post', {'id': editor.news.id}) }}">Go to#}
+{#                                                        news</a>#}
+{#                                                {% else %}#}
+{#                                                    {{ editor.status }}#}
+{#                                                {% endif %}#}
+{#                                            </div>#}
+{#                                            <div class="col-2">#}
+{#                                                <strong>Date:</strong> {{ editor.dateAt|date('H-i-d-m-Y') }}#}
+{#                                            </div>#}
+{#                                            <div class="col-2">#}
+{#                                                {% if editor.editor is not null %}#}
+{#                                                    <strong>Author:</strong>#}
+{#                                                    <td>#}
+{#                                                        {{ editor.author.name }}#}
+{#                                                        {{ editor.author.surname }}#}
+{#                                                    </td>#}
+{#                                                {% endif %}#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                    </a>#}
+{#                                </li>#}
+{#                            {% endfor %}#}
 
-                    </ul>
-                {% else %}
-                    <div class="alert alert-info mt-3">No notifications yet.</div>
-                {% endif %}
-                <div class="custom-pagination">
-                    {{ knp_pagination_render(editors) }}
-                </div>
+{#                        </ul>#}
+{#                    {% else %}#}
+{#                        <div class="alert alert-info mt-3">No notifications yet.</div>#}
+{#                    {% endif %}#}
+{#                    <div class="custom-pagination">#}
+{#                        {{ knp_pagination_render(editors) }}#}
+{#                    </div>#}
 
-            </div>
-            </div>
+{#                </div>#}
+{#            </div>#}
             <!-- End Editor -->
         </div>
     </div>
+
 {% endblock %}
