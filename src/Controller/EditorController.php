@@ -304,8 +304,6 @@ class EditorController extends AbstractController
 
 
             $this->entityManager->persist($editRequest);
-        }
-        $this->entityManager->flush();
 
         $now = new DateTime();
         $notify = new Notification();
@@ -317,8 +315,9 @@ class EditorController extends AbstractController
         $notify->setDestination('/review/edit/news/');
 
         $this->entityManager->persist($notify);
-        $this->entityManager->persist($editRequest);
-        $this->entityManager->flush();
+
+        }
+$this->entityManager->flush();
 
         $flashMessage = '';
         if ($status == 'accepted') {
@@ -497,7 +496,7 @@ class EditorController extends AbstractController
 
         $this->entityManager->flush();
 
-        $this->addFlash('publish', 'News has been made Public.');
+        $this->addFlash('publish', 'News has been review.');
 
 
         return $this->redirectToRoute('app_check', [

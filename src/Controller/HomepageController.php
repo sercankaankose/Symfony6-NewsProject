@@ -55,7 +55,7 @@ class HomepageController extends AbstractController
         $financeNews = $this->entityManager->getRepository(News::class)->findBy(
             ['status' => 'published', 'category' => '3'],
             ['view_count' => 'DESC'],
-            10
+            12
         );
 
         $technologyNews = $this->entityManager->getRepository(News::class)->findBy(
