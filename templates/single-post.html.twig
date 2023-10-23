@@ -4,20 +4,22 @@
 {% block title %}Article{% endblock %}
 
 {% block body %}
-<style>
-    img {
-        max-width: 100%;
-        height: auto;
-    }
-    figure[width*="1401"] {
-        max-width: 100px;
-    }
-    .content-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-</style>
+    <style>
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        figure[width*="1401"] {
+            max-width: 100px;
+        }
+
+        .content-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
     <main id="main">
 
         <section class="single-post-content">
@@ -27,13 +29,24 @@
 
                         <!-- ======= Single Post Content ======= -->
                         <div class="single-post">
-                            <div class="post-meta" style="font-size: 16px"><span class="date">{{ news.category.categoryname }}</span>
+                            <div class="post-meta" style="font-size: 16px"><span
+                                        class="date">{{ news.category.categoryname }}</span>
                                 <span class="mx-1">&bullet;</span>
                                 <span>{{ news.publishedAt|date('M jS Y') }}</span> <br>
                                 <hr>
                                 <a href="{{ path('app_public_profile',{'id':news.author.id}) }}">
-                                <span class="date">{{ news.author.name }}</span> <span
-                                        class="date">{{ news.author.surname }}</span></a>
+                                    <div class="author d-flex align-items-center">
+                                        <div class="photo">
+                                            {% if news.author.profileImage is not empty %}
+                                                <img src="{{ asset(news.author.profileImage) }}" alt="" class="img-fluid">
+                                            {% endif %}
+                                        </div>
+                                        <div class="name ml-2">
+                                            <h3 class="m-0 p-0">{{ news.author.name }} {{ news.author.surname }}</h3>
+                                        </div>
+                                    </div>
+                                </a>
+
                             </div>
                             <div style="text-align: right; font-size: 28px">{{ news.viewCount }}</div>
 
@@ -41,7 +54,7 @@
 
                             {% if news.image != null %}
                                 <figure class="content-container">
-                                    <img src="{{ asset(news.image) }}" alt="" class="img-thumbnail">
+                                    <img src="{{ asset(news.image) }}" alt="" class="img-thumbnail" style="max-width: 800px">
                                 </figure>
                             {% else %}
                             {% endif %}
@@ -84,24 +97,25 @@
                                 <div class="tab-pane fade show active" id="pills-popular" role="tabpanel"
                                      aria-labelledby="pills-popular-tab">
                                     {% for index, new in popularNews %}
-                                            <div class="post-entry-1 border-bottom">
-                                                <div class="post-meta">
-                                                    <span class="date">{{ new.category.categoryname }}</span>
-                                                    <span class="mx-1">&bullet;</span>
-                                                    <span>{{ new.createdAt|date('M jS Y') }}</span>
-                                                </div>
-                                                <h2 class="mb-2">
-                                                    <a href="{{ path('app_post', {'id': new.id}) }}">{{ new.title }}</a>
-                                                </h2>
-                                                <span class="author mb-3 d-block">{{ new.author.name }} {{ new.author.surname }}</span>
+                                        <div class="post-entry-1 border-bottom">
+                                            <div class="post-meta">
+                                                <span class="date">{{ new.category.categoryname }}</span>
+                                                <span class="mx-1">&bullet;</span>
+                                                <span>{{ new.createdAt|date('M jS Y') }}</span>
                                             </div>
+                                            <h2 class="mb-2">
+                                                <a href="{{ path('app_post', {'id': new.id}) }}">{{ new.title }}</a>
+                                            </h2>
+                                            <span class="author mb-3 d-block">{{ new.author.name }} {{ new.author.surname }}</span>
+                                        </div>
                                     {% endfor %}
 
                                 </div>
                                 <!-- End Popular -->
 
                                 <!-- Trending -->
-                                <div class="tab-pane fade" id="pills-trending" role="tabpanel" aria-labelledby="pills-trending-tab">
+                                <div class="tab-pane fade" id="pills-trending" role="tabpanel"
+                                     aria-labelledby="pills-trending-tab">
                                     {% for new in trendingNews |slice(0, 6) %}
                                         <div class="post-entry-1 border-bottom">
                                             <div class="post-meta">
@@ -119,7 +133,8 @@
                                 <!-- End Trending -->
 
                                 <!-- Latest -->
-                                <div class="tab-pane fade" id="pills-latest" role="tabpanel" aria-labelledby="pills-latest-tab">
+                                <div class="tab-pane fade" id="pills-latest" role="tabpanel"
+                                     aria-labelledby="pills-latest-tab">
                                     {% for new in latestNews |slice(0, 6) %}
                                         <div class="post-entry-1 border-bottom">
                                             <div class="post-meta">
@@ -137,16 +152,9 @@
                                 <!-- End Latest -->
 
                                 <div class="aside-block">
-                                    <h3 class="aside-title">Categories</h3>
+                                    <h3 class="aside-title"></h3>
                                     <ul class="aside-links list-unstyled">
-                                        {% for category in categories %}
-                                            <li>
-                                                {#                                        <a href="{{ path('app_edited_news', {'category': news.category.categoryname}) }}"> #}
-                                                <i class="bi bi-chevron-right"></i>
-                                                {{ category.categoryname }}
-                                                {#                                        </a> #}
-                                            </li>
-                                        {% endfor %}
+
                                     </ul>
                                 </div>
 

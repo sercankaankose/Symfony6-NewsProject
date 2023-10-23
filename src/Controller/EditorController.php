@@ -285,7 +285,7 @@ class EditorController extends AbstractController
         if (!$news) {
             $this->redirectToRoute('app_check');
         }
-        $news->setStatus($status);
+        $news->setStatus('in_progress');
         $this->entityManager->persist($news);
 
         if ($status == 'sent_to_edit') {
@@ -298,7 +298,12 @@ class EditorController extends AbstractController
             $editRequest->setEditorNote($editorNote);
             $editRequest->setRequestAt(new \DateTime());
 
-            $editRequest->setStatus('waiting');
+            $now = new  DateTime();
+            $updatedAt = clone $now;
+            $updatedAt->add(new \DateInterval('P1D'));
+            $editRequest->setUpdatedAt($updatedAt);
+
+            $editRequest->setStatus('in_progress');
             $editRequest->setNews($news);
             $editRequest->setEditor($editor);
 
@@ -312,7 +317,7 @@ class EditorController extends AbstractController
         $notify->setAddedAt($now);
         $notify->setPerson($news->getAuthor());
         $notify->setNews($news);
-        $notify->setDestination('/review/edit/news/');
+        $notify->setDestination('/editing/news/');
 
         $this->entityManager->persist($notify);
 

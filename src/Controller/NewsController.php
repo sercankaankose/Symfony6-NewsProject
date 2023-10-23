@@ -25,8 +25,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class NewsController extends AbstractController
 {
-    private UserRepository $UserRepository;
-    private NewsRepository $newsRepository;
+
     private EntityManagerInterface $entityManager;
 
     public function __construct(UserRepository $UserRepository, NewsRepository $newsRepository, EntityManagerInterface $entityManager)
@@ -41,7 +40,6 @@ class NewsController extends AbstractController
                          ContentRepository $contentRepository, Request $request): Response
     {
         $user = $security->getUser();
-        $categories = $contentRepository->findAll();
         $news = $newsRepository->findOneBy(['id' => $id]);
 
         $popularNews = $this->entityManager->getRepository(News::class)->findBy(
@@ -70,7 +68,6 @@ class NewsController extends AbstractController
             $entityManager->flush();
 
             return $this->render('single-post.html.twig', [
-                'categories' => $categories,
                 'news' => $news,
                 'id' => $id,
                 'popularNews' => $popularNews,
@@ -311,6 +308,7 @@ class NewsController extends AbstractController
         $notify->setDestination('/news/edit/request');
 
         $this->entityManager->persist($notify);
+        $this->entityManager->persist($news);
         $this->entityManager->persist($editRequest);
         $this->entityManager->flush();
         $this->addFlash('permıserror', 'Time was requested for editing');
@@ -337,14 +335,10 @@ class NewsController extends AbstractController
         if ($user !== $author) {
             throw $this->createAccessDeniedException('You do not have permission to access this news.');
         }
-
-        $editRequest = $editRequestRepository->createQueryBuilder('e')
-            ->where('e.news = :news')
-            ->setParameter('news', $news)
-            ->orderBy('e.request_at', 'DESC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
+        $editRequest = $this->entityManager->getRepository(EditRequest::class)->findOneBy([
+            'news' => $news,
+            'status' => 'in_progress',
+        ]);
 
         $now = new \DateTime();
 
