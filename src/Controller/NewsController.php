@@ -7,6 +7,7 @@ use App\Entity\News;
 use App\Entity\Notification;
 use App\Entity\User;
 use App\Form\NewsType;
+use App\Params\RoleParams;
 use App\Repository\ContentRepository;
 use App\Repository\EditRequestRepository;
 use App\Repository\NewsRepository;
@@ -28,16 +29,14 @@ class NewsController extends AbstractController
 
     private EntityManagerInterface $entityManager;
 
-    public function __construct(UserRepository $UserRepository, NewsRepository $newsRepository, EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->UserRepository = $UserRepository;
-        $this->newsRepository = $newsRepository;
+
         $this->entityManager = $entityManager;
     }
 
     #[Route('/post/{id}', name: 'app_post')]
-    public function post($id, Security $security, NewsRepository $newsRepository, EntityManagerInterface $entityManager,
-                         ContentRepository $contentRepository, Request $request): Response
+    public function post($id, Security $security, NewsRepository $newsRepository, EntityManagerInterface $entityManager,): Response
     {
         $user = $security->getUser();
         $news = $newsRepository->findOneBy(['id' => $id]);
@@ -323,22 +322,24 @@ class NewsController extends AbstractController
     {
 
         $news = $this->entityManager->getRepository(News::class)->find($id);
-
+        $editRequest = $this->entityManager->getRepository(EditRequest::class)->findOneBy([
+            'news' => $news,
+            'status' => 'in_progress',
+        ]);
         $user = $security->getUser();
         $author = $news->getAuthor();
 
         if (!$news || $news->getStatus() !== 'in_progress') {
             $this->addFlash('permıserror', 'You do not have permission to edit this news.');
             return $this->redirectToRoute('app_profile');
-
+        }
+        if (!$editRequest || $editRequest->getStatus() !== 'inprogress'){
+            $this->createAccessDeniedException();
         }
         if ($user !== $author) {
             throw $this->createAccessDeniedException('You do not have permission to access this news.');
         }
-        $editRequest = $this->entityManager->getRepository(EditRequest::class)->findOneBy([
-            'news' => $news,
-            'status' => 'in_progress',
-        ]);
+
 
         $now = new \DateTime();
 
@@ -382,7 +383,7 @@ class NewsController extends AbstractController
             $notify->setAddedAt($now);
             $notify->setPerson($news->getEditor());
             $notify->setNews($news);
-            $notify->setDestination('/editor/Check/News');
+            $notify->setDestination('/editor/check/');
 
             $this->entityManager->persist($notify);
             $this->entityManager->persist($news);

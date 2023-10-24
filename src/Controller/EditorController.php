@@ -36,7 +36,7 @@ class EditorController extends AbstractController
 
 
         $user = $security->getUser();
-        if (!$user){
+        if (!$user) {
             return $this->redirectToRoute('app_login');
         }
         $newsList = $newsRepository->findBy(
@@ -52,15 +52,7 @@ class EditorController extends AbstractController
 
 
         $waitingCount = $this->entityManager->getRepository(News::class)->count(['status' => 'waiting']);
-        $editorReviewCount = $this->entityManager->getRepository(News::class)
-            ->createQueryBuilder('n')
-            ->select('COUNT(n.id)')
-            ->where('n.status = :status')
-            ->andWhere('n.editor = :editor')
-            ->setParameter('status', 'editorreview')
-            ->setParameter('editor', $editor)
-            ->getQuery()
-            ->getSingleScalarResult();
+        $editorReviewCount = $this->entityManager->getRepository(News::class)->count(['status' => 'editorreview', 'editor' => $this->getUser()]);
         $acceptedCount = $this->entityManager->getRepository(News::class)->count(['status' => 'accepted']);
         $deniedCount = $this->entityManager->getRepository(News::class)->count(['status' => 'denied']);
         $editorRequestCount = $this->entityManager->getRepository(News::class)->count(['status' => 'edit_request_response', 'editor' => $this->getUser()]);
@@ -80,12 +72,12 @@ class EditorController extends AbstractController
     }
 
 
-    #[Route("/editor/revieww", name: "editor_updatereview")]
+    #[Route("/editor/reviewed", name: "editor_updatereview")]
     public function updatereview(Security $security): Response
     {
 
         $user = $security->getUser();
-        if (!$user){
+        if (!$user) {
             return $this->redirectToRoute('app_login');
         }
         if (!in_array('Editor', $user->getRoles())) {
@@ -102,17 +94,8 @@ class EditorController extends AbstractController
 
         $newsList2 = $queryBuilder->getQuery()->getResult();
 
-        $editor = $user->getId();
         $waitingCount = $this->entityManager->getRepository(News::class)->count(['status' => 'waiting']);
-        $editorReviewCount = $this->entityManager->getRepository(News::class)
-            ->createQueryBuilder('n')
-            ->select('COUNT(n.id)')
-            ->where('n.status = :status')
-            ->andWhere('n.editor = :editor')
-            ->setParameter('status', 'editorreview')
-            ->setParameter('editor', $editor)
-            ->getQuery()
-            ->getSingleScalarResult();
+        $editorReviewCount = $this->entityManager->getRepository(News::class)->count(['status' => 'editorreview', 'editor' => $this->getUser()]);
         $acceptedCount = $this->entityManager->getRepository(News::class)->count(['status' => 'accepted']);
         $deniedCount = $this->entityManager->getRepository(News::class)->count(['status' => 'denied']);
         $editorRequestCount = $this->entityManager->getRepository(News::class)->count(['status' => 'edit_request_response', 'editor' => $this->getUser()]);
@@ -139,14 +122,11 @@ class EditorController extends AbstractController
 
         $news = $newsRepository->find($id);
         $user = $security->getUser();
-        if (!$user){
+        if (!$user) {
             return $this->redirectToRoute('app_login');
         }
         if (!in_array('Editor', $user->getRoles())) {
             throw $this->createAccessDeniedException('You do not have permission to access this page.');
-        }
-        if ($news->getStatus() !== 'waiting') {
-            throw $this->createAccessDeniedException('The news status is not "waiting".');
         } elseif ($news->getAuthor() === $user) {
             $this->addFlash('takebad', 'Editor and author cannot be the same');
             $this->redirectToRoute('editor_review');
@@ -155,15 +135,9 @@ class EditorController extends AbstractController
             $news->setStatus('editorreview');
 
             $entityManager->persist($news);
-
-
-
             $this->entityManager->flush();
-
             $this->addFlash('takesucces', 'News has been taken.');
-
         }
-
 
         return $this->redirectToRoute('editor_review', [
             'user' => $user,
@@ -178,7 +152,7 @@ class EditorController extends AbstractController
     {
         $user = $this->getUser();
 
-        if (!$user){
+        if (!$user) {
             return $this->redirectToRoute('app_login');
         }
         if (!in_array('Editor', $user->getRoles())) {
@@ -188,15 +162,9 @@ class EditorController extends AbstractController
 
         $newsList = $newsRepository->findBy(['editor' => $editor, 'status' => 'editorreview']);
         $waitingCount = $this->entityManager->getRepository(News::class)->count(['status' => 'waiting']);
-        $editorReviewCount = $this->entityManager->getRepository(News::class)
-            ->createQueryBuilder('n')
-            ->select('COUNT(n.id)')
-            ->where('n.status = :status')
-            ->andWhere('n.editor = :editor')
-            ->setParameter('status', 'editorreview')
-            ->setParameter('editor', $editor)
-            ->getQuery()
-            ->getSingleScalarResult();
+        $editorReviewCount = $this->entityManager->getRepository(News::class)->count(['status' => 'editorreview', 'editor' => $this->getUser()]);
+
+
         $acceptedCount = $this->entityManager->getRepository(News::class)->count(['status' => 'accepted']);
         $deniedCount = $this->entityManager->getRepository(News::class)->count(['status' => 'denied']);
         $editorRequestCount = $this->entityManager->getRepository(News::class)->count(['status' => 'edit_request_response', 'editor' => $this->getUser()]);
@@ -218,16 +186,17 @@ class EditorController extends AbstractController
     #[Route("/editor/check/{id}", name: "editor_review_detail")]
     public function reviewdetail($id, NewsRepository $newsRepository, Security $security): Response
     {
-        $user = $security->getUser(); if (!$user){
-        return $this->redirectToRoute('app_login');
-    }
+        $user = $security->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
         if (!in_array('Editor', $user->getRoles())) {
             throw $this->createAccessDeniedException('You do not have permission to access this page.');
         }
 
         $news = $newsRepository->find($id);
         $editor = $user->getId();
-        
+
         if ($news->getEditor() !== $user) {
             throw $this->createAccessDeniedException('You are not the editor of this news.');
         }
@@ -237,15 +206,8 @@ class EditorController extends AbstractController
         }
 
         $waitingCount = $this->entityManager->getRepository(News::class)->count(['status' => 'waiting']);
-        $editorReviewCount = $this->entityManager->getRepository(News::class)
-            ->createQueryBuilder('n')
-            ->select('COUNT(n.id)')
-            ->where('n.status = :status')
-            ->andWhere('n.editor = :editor')
-            ->setParameter('status', 'editorreview')
-            ->setParameter('editor', $editor)
-            ->getQuery()
-            ->getSingleScalarResult();
+        $editorReviewCount = $this->entityManager->getRepository(News::class)->count(['status' => 'editorreview', 'editor' => $this->getUser()]);
+
         $acceptedCount = $this->entityManager->getRepository(News::class)->count(['status' => 'accepted']);
         $deniedCount = $this->entityManager->getRepository(News::class)->count(['status' => 'denied']);
         $editorRequestCount = $this->entityManager->getRepository(News::class)->count(['status' => 'edit_request_response', 'editor' => $this->getUser()]);
@@ -269,9 +231,10 @@ class EditorController extends AbstractController
     #[Route("/news/change-status/{newsId}/{status}", name: "change_news_status")]
     public function changeNewsStatusfunction($newsId, $status, Request $request): Response
     {
-        $user = $this->getUser();  if (!$user){
-        return $this->redirectToRoute('app_login');
-    }
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
         if (!in_array('Editor', $user->getRoles())) {
             throw $this->createAccessDeniedException('You do not have permission to access this page.');
         }
@@ -285,7 +248,7 @@ class EditorController extends AbstractController
         if (!$news) {
             $this->redirectToRoute('app_check');
         }
-        $news->setStatus('in_progress');
+        $news->setStatus($status);
         $this->entityManager->persist($news);
 
         if ($status == 'sent_to_edit') {
@@ -310,19 +273,20 @@ class EditorController extends AbstractController
 
             $this->entityManager->persist($editRequest);
 
-        $now = new DateTime();
-        $notify = new Notification();
-        $notify->setIsRead(false);
-        $notify->setContent('Sent for news editing');
-        $notify->setAddedAt($now);
-        $notify->setPerson($news->getAuthor());
-        $notify->setNews($news);
-        $notify->setDestination('/editing/news/');
+            $now = new DateTime();
+            $notify = new Notification();
+            $notify->setIsRead(false);
+            $notify->setContent('Sent for news editing');
+            $notify->setAddedAt($now);
+            $notify->setPerson($news->getAuthor());
+            $notify->setNews($news);
+            $notify->setDestination('/editing/news/');
 
-        $this->entityManager->persist($notify);
+            $this->entityManager->persist($notify);
 
         }
-$this->entityManager->flush();
+        $this->entityManager->persist($news);
+        $this->entityManager->flush();
 
         $flashMessage = '';
         if ($status == 'accepted') {
@@ -348,9 +312,10 @@ $this->entityManager->flush();
     #[Route("/news/published", name: "app_published")]
     public function published(NewsRepository $newsRepository, Security $security): Response
     {
-        $user = $security->getUser();if (!$user){
-        return $this->redirectToRoute('app_login');
-    }
+        $user = $security->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
         if (!in_array('Editor', $user->getRoles())) {
             throw $this->createAccessDeniedException('You do not have permission to access this page.');
         }
@@ -364,15 +329,8 @@ $this->entityManager->flush();
 
 
         $waitingCount = $this->entityManager->getRepository(News::class)->count(['status' => 'waiting']);
-        $editorReviewCount = $this->entityManager->getRepository(News::class)
-            ->createQueryBuilder('n')
-            ->select('COUNT(n.id)')
-            ->where('n.status = :status')
-            ->andWhere('n.editor = :editor')
-            ->setParameter('status', 'editorreview')
-            ->setParameter('editor', $editor)
-            ->getQuery()
-            ->getSingleScalarResult();
+        $editorReviewCount = $this->entityManager->getRepository(News::class)->count(['status' => 'editorreview', 'editor' => $this->getUser()]);
+
         $acceptedCount = $this->entityManager->getRepository(News::class)->count(['status' => 'accepted']);
         $deniedCount = $this->entityManager->getRepository(News::class)->count(['status' => 'denied']);
         $editorRequestCount = $this->entityManager->getRepository(News::class)->count(['status' => 'edit_request_response', 'editor' => $this->getUser()]);
@@ -396,7 +354,7 @@ $this->entityManager->flush();
     {
         $news = $newsRepository->find($id);
         $user = $security->getUser();
-        if (!$user){
+        if (!$user) {
             return $this->redirectToRoute('app_login');
         }
         if (!in_array('Editor', $user->getRoles())) {
@@ -436,7 +394,7 @@ $this->entityManager->flush();
     public function denied(NewsRepository $newsRepository, Security $security): Response
     {
         $user = $this->getUser();
-        if (!$user){
+        if (!$user) {
             return $this->redirectToRoute('app_login');
         }
 
@@ -451,15 +409,8 @@ $this->entityManager->flush();
 
 
         $waitingCount = $this->entityManager->getRepository(News::class)->count(['status' => 'waiting']);
-        $editorReviewCount = $this->entityManager->getRepository(News::class)
-            ->createQueryBuilder('n')
-            ->select('COUNT(n.id)')
-            ->where('n.status = :status')
-            ->andWhere('n.editor = :editor')
-            ->setParameter('status', 'editorreview')
-            ->setParameter('editor', $editor)
-            ->getQuery()
-            ->getSingleScalarResult();
+        $editorReviewCount = $this->entityManager->getRepository(News::class)->count(['status' => 'editorreview', 'editor' => $this->getUser()]);
+
         $acceptedCount = $this->entityManager->getRepository(News::class)->count(['status' => 'accepted']);
         $deniedCount = $this->entityManager->getRepository(News::class)->count(['status' => 'denied']);
         $editorRequestCount = $this->entityManager->getRepository(News::class)->count(['status' => 'edit_request_response', 'editor' => $this->getUser()]);
@@ -484,7 +435,7 @@ $this->entityManager->flush();
         $news = $newsRepository->find($id);
         $user = $security->getUser();
 
-        if (!$user){
+        if (!$user) {
             return $this->redirectToRoute('app_login');
         }
         if (!in_array('Editor', $user->getRoles())) {
@@ -516,7 +467,7 @@ $this->entityManager->flush();
     {
         $user = $security->getUser();
 
-        if (!$user){
+        if (!$user) {
             return $this->redirectToRoute('app_login');
         }
         if (!in_array('Editor', $user->getRoles())) {
@@ -544,16 +495,6 @@ $this->entityManager->flush();
         $editor = $user->getId();
 
         $waitingCount = $this->entityManager->getRepository(News::class)->count(['status' => 'waiting']);
-        $editorReviewCount = $this->entityManager->getRepository(News::class)
-            ->createQueryBuilder('n')
-            ->select('COUNT(n.id)')
-            ->where('n.status = :status')
-            ->andWhere('n.editor = :editor')
-            ->setParameter('status', 'editorreview')
-            ->setParameter('editor', $editor)
-            ->getQuery()
-            ->getSingleScalarResult();
-
         $editorReviewCount = $this->entityManager->getRepository(News::class)->count(['status' => 'editorreview', 'editor' => $editor]);
         $acceptedCount = $this->entityManager->getRepository(News::class)->count(['status' => 'accepted']);
         $deniedCount = $this->entityManager->getRepository(News::class)->count(['status' => 'denied']);
@@ -579,7 +520,7 @@ $this->entityManager->flush();
     {
         $user = $this->getUser();
 
-        if (!$user){
+        if (!$user) {
             return $this->redirectToRoute('app_login');
         }
         $news = $this->entityManager->getRepository(News::class)->find($id);
@@ -627,7 +568,7 @@ $this->entityManager->flush();
         $news = $this->entityManager->getRepository(News::class)->findOneBy(['id' => $id]);
         $user = $security->getUser();
         $author = $news->getAuthor();
-        if (!$user){
+        if (!$user) {
             return $this->redirectToRoute('app_login');
         }
         if (!$news) {
@@ -639,23 +580,22 @@ $this->entityManager->flush();
         }
 
 
-
         $notifys = $this->entityManager->getRepository(Notification::class)->findBy(['news' => $news]);
 
-            if ($notifys) {
-                foreach ($notifys as $notify) {
-                    $this->entityManager->remove($notify);
-                }
+        if ($notifys) {
+            foreach ($notifys as $notify) {
+                $this->entityManager->remove($notify);
             }
+        }
 
 
         $editRequests = $this->entityManager->getRepository(EditRequest::class)->findBy(['news' => $news]);
 
-            if ($editRequests) {
-                foreach ($editRequests as $editRequest) {
-                    $this->entityManager->remove($editRequest);
-                }
+        if ($editRequests) {
+            foreach ($editRequests as $editRequest) {
+                $this->entityManager->remove($editRequest);
             }
+        }
 
         $this->entityManager->flush();
         if ($news) {
@@ -666,7 +606,7 @@ $this->entityManager->flush();
         $this->entityManager->flush();
 
 
-        $this->addFlash('type','News Deleted');
+        $this->addFlash('type', 'News Deleted');
         return $this->redirectToRoute('app_denied');
     }
 

@@ -28,14 +28,11 @@ class NotificationExtension extends AbstractExtension
 
     public function getNotificationCount()
     {
-
-
         $user = $this->security->getUser();
         $UnreadnotifyCount = $this->entityManager->getRepository(Notification::class)->count([
             'person' => $user,
             'is_read' => false,
         ]);
-
 
         return $UnreadnotifyCount;
     }

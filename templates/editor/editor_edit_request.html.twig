@@ -30,7 +30,7 @@
         <div class="row">
 
             <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-                {% include 'sidebar_template.Twig' %}
+                {% include 'sidebar_template.twig' %}
             </nav>
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
@@ -45,8 +45,8 @@
                 </div>
                 <hr>
                 <div class="content-container">
-                    <input class="w3-input w3-border w3-padding" type="text" placeholder="Search"
-                           id="myInput" onkeyup="myFunction()">
+                    <label for="myInput"></label><input class="w3-input w3-border w3-padding" type="text" placeholder="Search"
+                                                        id="myInput" onkeyup="myFunction()">
                     {% for message in app.flashes('timeiscoming') %}
                         <div class="alert alert-success text-center">
                             {{ message }}

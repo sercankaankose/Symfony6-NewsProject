@@ -62,6 +62,9 @@ class NotifyController extends AbstractController
         } elseif ($notification->getContent() === NotificationParams::NOT_PUBLISHED) {
             return $this->redirect($notification->getDestination() . $newsid);
 
+        }elseif ($notification->getContent() === NotificationParams::NOT_NEWSEDITED) {
+            return $this->redirect($notification->getDestination() . $newsid);
+
         } else
             return $this->redirect($notification->getDestination());
 

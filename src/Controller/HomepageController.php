@@ -44,12 +44,12 @@ class HomepageController extends AbstractController
         $sportsNews = $this->entityManager->getRepository(News::class)->findBy(
             ['status' => 'published', 'category' => '1'],
             ['view_count' => 'DESC'],
-            10
+            12
         );
         $politicsNews = $this->entityManager->getRepository(News::class)->findBy(
             ['status' => 'published', 'category' => '2'],
             ['view_count' => 'DESC'],
-            10
+            12
         );
 
         $financeNews = $this->entityManager->getRepository(News::class)->findBy(
@@ -61,13 +61,13 @@ class HomepageController extends AbstractController
         $technologyNews = $this->entityManager->getRepository(News::class)->findBy(
             ['status' => 'published', 'category' => '4'],
             ['view_count' => 'DESC'],
-            10
+            12
         );
 
         $healthNews = $this->entityManager->getRepository(News::class)->findBy(
             ['status' => 'published', 'category' => '5'],
             ['view_count' => 'DESC'],
-            10
+            12
         );
 
         return $this->render('homepage/index.html.twig', [

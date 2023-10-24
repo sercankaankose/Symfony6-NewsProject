@@ -145,12 +145,15 @@ class ProfileController extends AbstractController
 
 
     #[Route('/profile/user/{id}', name: 'app_public_profile')]
-    public function publicprofile(NewsRepository $newsRepository, UserRepository $userRepository, Request $request, int $id): Response
+    public function publicprofile(NewsRepository $newsRepository, UserRepository $userRepository, int $id): Response
     {
         $user = $this->getUser();
 
         $profileUser = $userRepository->find($id);
 
+        if (empty($profileUser)){
+           return $this->redirectToRoute('app_homepage');
+        }
 
         $userNews = $newsRepository->findBy(['author' => $profileUser, 'status' => 'published']);
 

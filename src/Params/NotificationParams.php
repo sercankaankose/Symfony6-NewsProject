@@ -9,7 +9,7 @@ class NotificationParams
     const NOT_PUBLISHED = 'News Published';
     const NOT_SENDFOREDIT = 'Sent for news editing';
     const NOT_TIMEGIVENFOREDIT = 'Time was given to edit the news';
-    const NOT_NEWSEDITED = 'The news has been corrected';
+    const NOT_NEWSEDITED = 'News has been corrected';
 
 
 }

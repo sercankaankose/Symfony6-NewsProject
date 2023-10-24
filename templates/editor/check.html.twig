@@ -27,7 +27,7 @@
         <div class="row">
             <!-- Kenar Çubuğu -->
             <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-                {% include 'sidebar_template.Twig' %}
+                {% include 'sidebar_template.twig' %}
             </nav>
 
             <!-- Ana İçerik -->
@@ -59,7 +59,7 @@
                             <th>Image</th>
                         </tr>
                         {% for news in newsList %}
-                            <tr onclick="window.location='{{ path('editor_review_detail', {'id': news.id}) }}';">
+                        <tr onclick="window.location='{{ path('editor_review_detail', {'id': news.id}) }}';">
                                 <td>{{ news.title }}</td>
                                 <td>{{ news.author.name }} {{ news.author.surname }}</td>
                                 <td>{{ news.id }}</td>
