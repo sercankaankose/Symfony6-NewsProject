@@ -265,7 +265,8 @@ class EditorController extends AbstractController
             $updatedAt = clone $now;
             $updatedAt->add(new \DateInterval('P1D'));
             $editRequest->setUpdatedAt($updatedAt);
-
+            
+            $news->setStatus('in_progress);
             $editRequest->setStatus('in_progress');
             $editRequest->setNews($news);
             $editRequest->setEditor($editor);
